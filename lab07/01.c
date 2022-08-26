@@ -19,7 +19,7 @@ typedef struct node {
 } node_t;
 typedef node_t tree_t;
 
-typedef struct node {
+typedef struct stack {
   int value;
   struct node *next;
 } stack_t;
@@ -129,14 +129,23 @@ int depth(tree_t *t, int v) {
   return count;
 }
 
-void print_path(tree_t *t, int start, int end) {
-  node_t *temp = searchf(t, end);
-  while (temp->parent != start) {
-    printf("%d ", temp->value);
-    temp = searchf(t, temp->parent);
+int print_path(tree_t *t, int start, int end) {
+  static int A = 0;
+  int B = 0;
+  if (end == start) {
+    printf("%d ", start);
+    return 0;
   }
-  printf("%d ",temp->value);
-  printf("%d\n",start);
+  node_t *temp = searchf(t, end);
+  if (A == 0) {
+    B = 1;
+  }
+  A++;
+  print_path(t, start, temp->parent);
+  printf("%d ",end);
+  if (B == 1) {
+    printf("\n");
+  }
 }
 
 int main(void) {
