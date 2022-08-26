@@ -148,6 +148,8 @@ int print_path(tree_t *t, int start, int end) {
   }
 }
 
+
+
 int main(void) {
   tree_t *t = NULL;
   int n, i, command;
@@ -192,11 +194,11 @@ int main(void) {
       case 9:
         scanf("%d %d", &start, &end);
         print_path(t, start, end);
-        break;/*
+        break;
       case 10:
         scanf("%d %d", &start, &end);
         printf("%d\n", path_length(t, start, end));
-        break;
+        break;/*
       case 11:
         scanf("%d", &node);
         ancestor(t, node);
