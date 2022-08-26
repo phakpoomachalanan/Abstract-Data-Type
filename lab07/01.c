@@ -19,10 +19,10 @@ typedef struct node {
 } node_t;
 typedef node_t tree_t;
 
-typedef struct stack {
+typedef struct queue {
   int value;
   struct node *next;
-} stack_t;
+} queue_t;
 
 node_t *searchf(tree_t *t, int v) {
   node_t *pos;
@@ -148,7 +148,23 @@ int print_path(tree_t *t, int start, int end) {
   }
 }
 
+int path_length(tree_t *t, int start, int end) {
+  node_t *temp = searchf(t, end);
+  int count  = 1;
+  while (temp->parent != start) {
+    count++;
+    temp = searchf(t, temp->parent);
+  }
+  return count;
+}
 
+void ancestor(tree_t *t, int v) {
+  print_path(t, t->value, v);
+}
+
+void bfs(tree_t *t) {
+  node_t *temp
+}
 
 int main(void) {
   tree_t *t = NULL;
@@ -198,18 +214,18 @@ int main(void) {
       case 10:
         scanf("%d %d", &start, &end);
         printf("%d\n", path_length(t, start, end));
-        break;/*
+        break;
       case 11:
         scanf("%d", &node);
         ancestor(t, node);
-        break;
+        break;/*
       case 12:
         scanf("%d", &node);
         descendant(t, node);
-        break;
+        break;*/
       case 13:
         bfs(t);
-        break;
+        break;/*
       case 14:
         dfs(t);
         break;
