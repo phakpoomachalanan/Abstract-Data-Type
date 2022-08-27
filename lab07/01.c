@@ -33,7 +33,6 @@ void enqueue(queue_t *q,tree_t *t) {
   node_q *newnode = (node_q *)malloc(sizeof(node_q));
   newnode->next = NULL;
   newnode->the_child = t;
-  printf("%p", q);
   if (q->front == NULL) {
     q->front = newnode;
     q->rear = newnode;
@@ -181,7 +180,8 @@ void ancestor(tree_t *t, int v) {
 }
 
 int bfs(tree_t *t) {
-  queue_t *q = {NULL, NULL};
+  queue_t *q = (queue_t *)malloc(sizeof(queue_t));
+  q->front = NULL; q->rear = NULL;
   while (1) {
     if (t->next_sibling != NULL) {
       while (t->next_sibling != NULL) {
