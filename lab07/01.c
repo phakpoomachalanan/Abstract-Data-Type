@@ -216,6 +216,9 @@ int print_path(tree_t *t, int start, int end) {
 }
 
 int path_length(tree_t *t, int start, int end) {
+  if (start == end) {
+    return 0;
+  }
   node_t *temp = searchf(t, end);
   int count  = 1;
   while (temp->parent != start) {
@@ -270,6 +273,41 @@ void descendant(tree_t *t, int v) {
   bfs(temp->first_child);
 }
 
+int dfs(tree_t *t) {
+  printf("%d ", t->value);
+  if (t->first_child != NULL) {
+    dfs(t->first_child);
+  } 
+  if (t->next_sibling != NULL) {
+    dfs(t->next_sibling);
+  }
+  if (t->parent == -1) {
+    printf("\n");
+  }  
+} 
+
+void print_tree(tree_t *t) {
+  static node_t *temp = NULL;
+  if (t->parent == -1) {
+    temp = t;
+  }
+  int i;
+  int count;
+
+  count = path_length(temp,temp->value,t->value);
+  for (i = 0;i<count;i++) {
+    printf("    ");
+  }
+  printf("%d\n", t->value);
+
+  if (t->first_child != NULL) {
+    print_tree(t->first_child);
+  } 
+  if (t->next_sibling != NULL) {
+    print_tree(t->next_sibling);
+  }
+}
+ 
 int main(void) {
   tree_t *t = NULL;
   int n, i, command;
@@ -329,13 +367,13 @@ int main(void) {
         break;
       case 13:
         bfs(t);
-        break;/*
+        break;
       case 14:
         dfs(t);
         break;
       case 15:
         print_tree(t);
-        break;*/
+        break;
     }
   }
   return 0;
