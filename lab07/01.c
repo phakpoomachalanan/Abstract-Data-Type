@@ -92,7 +92,53 @@ node_t *attach(tree_t *t, int parent, int child) {
 
 node_t *detach(tree_t *t, int v) {
   node_t *temp = NULL;
-  
+  node_t *temp_t = NULL;
+  temp_t = searchf(t,v);
+  if (temp_t->parent == -1) {
+    free(t);
+    return NULL;
+  } else {
+    temp = searchf(t,temp_t->parent);
+    if (temp->first_child->value == v) {
+      temp->first_child = NULL;
+    } else {
+    temp = temp->first_child;
+    while (temp->next_sibling->value != v) {
+      temp = temp->next_sibling;
+    }
+    temp->next_sibling = NULL;
+    }
+    temp = temp_t;
+  }
+  queue_t *q = (queue_t *)malloc(sizeof(queue_t));
+  q->front = NULL; q->rear = NULL;
+  while (1) {
+    if (temp->next_sibling != NULL) {
+      while (temp != NULL) {
+        if (temp->first_child != NULL) {
+          //printf("[%d]",t->first_child->value);
+          enqueue(q,temp->first_child);
+        }
+        temp_t = temp;
+        temp = temp->next_sibling;
+        free(temp_t);
+      }
+    } else {
+      if (temp->first_child != NULL) {
+          enqueue(q,temp->first_child);
+        }
+      temp_t = temp;
+      free(temp_t);
+    }
+    
+    if (q->front != NULL) {
+      temp = q->front->the_child;
+      //printf("{%d}", t->value);
+      q->front = q->front->next;
+    } else {
+      return t;
+    }
+  }
 }
 
 int degree(tree_t *t, int v) {
@@ -184,6 +230,9 @@ void ancestor(tree_t *t, int v) {
 }
 
 int bfs(tree_t *t) {
+  if (t == NULL) {
+    return 0;
+  }
   queue_t *q = (queue_t *)malloc(sizeof(queue_t));
   q->front = NULL; q->rear = NULL;
   while (1) {
@@ -213,6 +262,12 @@ int bfs(tree_t *t) {
       return 0;
     }
   }
+}
+
+void descendant(tree_t *t, int v) {
+  tree_t *temp = searchf(t, v);
+  printf("%d ",temp->value);
+  bfs(temp->first_child);
 }
 
 int main(void) {
@@ -267,11 +322,11 @@ int main(void) {
       case 11:
         scanf("%d", &node);
         ancestor(t, node);
-        break;/*
+        break;
       case 12:
         scanf("%d", &node);
         descendant(t, node);
-        break;*/
+        break;
       case 13:
         bfs(t);
         break;/*
