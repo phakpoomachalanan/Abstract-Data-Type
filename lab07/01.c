@@ -130,7 +130,7 @@ void siblings(tree_t *t, int v) {
   temp = temp->first_child;
   while (temp != NULL) {
     if (temp->value != v) {
-      printf("%d ",temp->value);
+      printf("%d ", temp->value);
     }
     temp = temp->next_sibling;
   }
