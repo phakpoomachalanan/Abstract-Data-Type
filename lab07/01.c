@@ -29,6 +29,28 @@ typedef struct queue {
   node_q *rear;
 } queue_t;
 
+typedef struct nodes {
+  int data;
+  struct nodes *next;
+
+} stack_t;
+stack_t *push(stack_t *s, int value) {
+  stack_t *node = (stack_t *)(malloc(sizeof (stack_t)));
+  node->data = value;
+  node->next = NULL;
+  node->next = s;
+  s = node;
+  return s;
+}
+stack_t *pop(stack_t *s) {
+  if (s == NULL) {
+    return NULL;
+  }
+  stack_t *temp = NULL;
+  temp = s->next;
+  free(s);
+  return temp;
+}
 void enqueue(queue_t *q,tree_t *t) {
   //printf("-%d-", t->value);
   node_q *newnode = (node_q *)malloc(sizeof(node_q));
@@ -175,8 +197,12 @@ int is_leaf(tree_t *t, int v) {
 
 void siblings(tree_t *t, int v) {
   node_t *temp = searchf(t,v);
+  if (temp->parent == -1) {
+    temp = temp;
+  } else {
   temp = searchf(t,temp->parent);
   temp = temp->first_child;
+  }
   while (temp != NULL) {
     if (temp->value != v) {
       printf("%d ", temp->value);
@@ -197,22 +223,20 @@ int depth(tree_t *t, int v) {
 }
 
 int print_path(tree_t *t, int start, int end) {
-  static int A = 0;
-  int B = 0;
-  if (end == start) {
-    printf("%d ", start);
-    return 0;
+  stack_t *s = NULL;
+  s = push(s,end);
+  while (end != start) {
+    end = searchf(t,end)->parent;
+    s = push(s,end);
   }
-  node_t *temp = searchf(t, end);
-  if (A == 0) {
-    B = 1;
+  while (s->next != NULL) {
+    printf("%d ",s->data);
+    s = pop(s);
   }
-  A++;
-  print_path(t, start, temp->parent);
-  printf("%d ",end);
-  if (B == 1) {
-    printf("\n");
+  if (s->next == NULL) {
+    printf("%d ",s->data);
   }
+  printf("\n");
 }
 
 int path_length(tree_t *t, int start, int end) {
@@ -274,6 +298,9 @@ void descendant(tree_t *t, int v) {
 }
 
 int dfs(tree_t *t) {
+  if (t == NULL) {
+    return 0;
+  }
   printf("%d ", t->value);
   if (t->first_child != NULL) {
     dfs(t->first_child);
@@ -286,7 +313,10 @@ int dfs(tree_t *t) {
   }  
 } 
 
-void print_tree(tree_t *t) {
+int print_tree(tree_t *t) {
+  if (t == NULL) {
+    return 0;
+  }
   static node_t *temp = NULL;
   if (t->parent == -1) {
     temp = t;
