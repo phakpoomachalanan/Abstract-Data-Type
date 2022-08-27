@@ -19,10 +19,28 @@ typedef struct node {
 } node_t;
 typedef node_t tree_t;
 
+typedef struct nodeq {
+  struct node *the_child;
+  struct nodeq *next;
+} node_q;
+
 typedef struct queue {
-  int value;
-  struct node *next;
+  node_q *front;
+  node_q *rear;
 } queue_t;
+
+void enqueue(queue_t *q,tree_t *t) {
+  node_q *newnode = (node_q *)malloc(sizeof(node_q));
+  newnode->next = NULL;
+  newnode->the_child = t;
+  printf("%p", q);
+  if (q->front == NULL) {
+    q->front = newnode;
+    q->rear = newnode;
+  } else {
+    q->rear->next = newnode;
+  }
+}
 
 node_t *searchf(tree_t *t, int v) {
   node_t *pos;
@@ -162,15 +180,39 @@ void ancestor(tree_t *t, int v) {
   print_path(t, t->value, v);
 }
 
-void bfs(tree_t *t) {
-  node_t *temp
+int bfs(tree_t *t) {
+  queue_t *q = {NULL, NULL};
+  while (1) {
+    if (t->next_sibling != NULL) {
+      while (t->next_sibling != NULL) {
+        printf("%d ", t->value);
+        if (t->first_child != NULL) {
+          enqueue(q,t);
+        }
+        t = t->next_sibling;
+      }
+    } else {
+      printf("%d ", t->value);
+      if (t->first_child != NULL) {
+          enqueue(q,t);
+
+        }
+    }
+    if (q->front != NULL) {
+      t = q->front->the_child;
+      q->front = q->front->next;
+    } else {
+      printf("\n");
+      return 0;
+    }
+  }
 }
 
 int main(void) {
   tree_t *t = NULL;
   int n, i, command;
   int parent, child, node, start, end;
-
+  
   scanf("%d", &n);
   for (i=0; i<n; i++) {
     scanf("%d", &command);
