@@ -113,11 +113,22 @@ node_t *attach(tree_t *t, int parent, int child) {
 }
 
 node_t *detach(tree_t *t, int v) {
-  t = searchf(t, searchf(t,v)->parent);
-  t = t->first_child;
-  while (t->value != v) {
-    t = t->next_sibling;
+  tree_t *temp = NULL;
+  if (searchf(t,v)->parent == -1) {
+    return NULL;
   }
+  temp = searchf(t, searchf(t,v)->parent);
+
+  if (temp->first_child->value == v) {
+    temp->first_child = temp->first_child->next_sibling;
+    return t;
+  }
+  temp = temp->first_child;
+  while (temp->next_sibling->value != v) {
+    temp = temp->next_sibling;
+  }
+  temp->next_sibling = temp->next_sibling->next_sibling;
+  return t;
 
 }
 
@@ -199,7 +210,7 @@ int print_path(tree_t *t, int start, int end) {
 
 int path_length(tree_t *t, int start, int end) {
   if (start == end) {
-    return 0;
+    return 1;
   }
   node_t *temp = searchf(t, end);
   int count  = 1;
@@ -207,6 +218,7 @@ int path_length(tree_t *t, int start, int end) {
     count++;
     temp = searchf(t, temp->parent);
   }
+  count++;
   return count;
 }
 
@@ -283,7 +295,7 @@ int print_tree(tree_t *t) {
   int count;
 
   count = path_length(temp,temp->value,t->value);
-  for (i = 0;i<count;i++) {
+  for (i = 0;i<count-1;i++) {
     printf("    ");
   }
   printf("%d\n", t->value);
