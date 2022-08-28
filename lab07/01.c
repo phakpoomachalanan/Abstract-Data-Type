@@ -113,54 +113,12 @@ node_t *attach(tree_t *t, int parent, int child) {
 }
 
 node_t *detach(tree_t *t, int v) {
-  node_t *temp = NULL;
-  node_t *temp_t = NULL;
-  temp_t = searchf(t,v);
-  if (temp_t->parent == -1) {
-    free(t);
-    return NULL;
-  } else {
-    temp = searchf(t,temp_t->parent);
-    if (temp->first_child->value == v) {
-      temp->first_child = NULL;
-    } else {
-    temp = temp->first_child;
-    while (temp->next_sibling->value != v) {
-      temp = temp->next_sibling;
-    }
-    temp->next_sibling = NULL;
-    }
-    temp = temp_t;
+  t = searchf(t, searchf(t,v)->parent);
+  t = t->first_child;
+  while (t->value != v) {
+    t = t->next_sibling;
   }
-  queue_t *q = (queue_t *)malloc(sizeof(queue_t));
-  q->front = NULL; q->rear = NULL;
-  while (1) {
-    if (temp->next_sibling != NULL) {
-      while (temp != NULL) {
-        if (temp->first_child != NULL) {
-          //printf("[%d]",t->first_child->value);
-          enqueue(q,temp->first_child);
-        }
-        temp_t = temp;
-        temp = temp->next_sibling;
-        free(temp_t);
-      }
-    } else {
-      if (temp->first_child != NULL) {
-          enqueue(q,temp->first_child);
-        }
-      temp_t = temp;
-      free(temp_t);
-    }
-    
-    if (q->front != NULL) {
-      temp = q->front->the_child;
-      //printf("{%d}", t->value);
-      q->front = q->front->next;
-    } else {
-      return t;
-    }
-  }
+
 }
 
 int degree(tree_t *t, int v) {
