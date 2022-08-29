@@ -33,20 +33,16 @@ void fake_bfs(tree_t* t);
 void dfs(tree_t* t);
 node_t* searchDepth(tree_t* t, int depth, int mode);
 void print_tree(tree_t* t);
-void print_value(tree_t* t, int value);
 
-int main(void)
-{
+int main(void) {
   tree_t *t = NULL;
   int n, i, command;
   int parent, child, node, start, end;
 
   scanf("%d", &n);
-  for (i=0; i<n; i++)
-  {
+  for (i=0; i<n; i++) {
     scanf("%d", &command);
-    switch(command)
-    {
+    switch(command) {
       case 1:
         scanf("%d %d", &parent, &child);
         t = attach(t, parent, child);
@@ -63,7 +59,7 @@ int main(void)
         scanf("%d", &node);
         printf("%d\n", degree(t, node));
         break;
-     case 5:
+      case 5:
         scanf("%d", &node);
         printf("%d\n", is_root(t, node));
         break;
@@ -104,9 +100,6 @@ int main(void)
       case 15:
         print_tree(t);
         break;
-        case 16:
-        scanf("%d", &node);
-        print_value(t, node);
     }
   }
   return 0;
@@ -392,10 +385,4 @@ node_t* searchDepth(tree_t* t, int depth, int mode)
 void print_tree(tree_t* t)
 {
     searchDepth(t, 0, 0);
-}
-
-void print_value(tree_t* t, int value)
-{
-    node_t* node = searchNode(t, value);
-    printf("value: %d\nparent: %d\nsibling: %d\n", node->value, node->parent, node->sibling);
 }
