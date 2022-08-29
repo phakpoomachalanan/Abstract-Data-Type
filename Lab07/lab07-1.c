@@ -335,7 +335,6 @@ void fake_bfs(tree_t* t)
             {
                 break;
             }
-            //printf("i: %d j: %d ll: %d degree: %d value: %d\n", i, j, lastLevel, deg, node->value);
             tree[lastLevel] = node;
             lastLevel++;
             node = node->next_sibling;
