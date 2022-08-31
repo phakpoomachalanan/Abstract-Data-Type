@@ -15,7 +15,7 @@ typedef node_t tree_t;
 void print_preorder(tree_t* t);
 void print_postorder(tree_t* t);
 void print_inorder(tree_t* t);
-tree_t* search(tree_t* t, int mode);
+void print_order(tree_t* t, int mode);
 
 int main(void) {
     tree_t *t = NULL;
@@ -38,15 +38,31 @@ int main(void) {
 
 void print_preorder(tree_t* t)
 {
-
+    print_order(t, 1);
+    printf("\n");
 }
 
 void print_postorder(tree_t* t)
 {
-
+    print_order(t, 2);
+    printf("\n");
 }
 
 void print_inorder(tree_t* t)
 {
+    print_order(t, 3);
+    printf("\n");
+}
 
+void print_order(tree_t* t, int mode)
+{
+    if (t == NULL)
+    {
+        return;
+    }
+
+    mode == 1 ? printf("%d ", t->data) : print_order(t->left, mode);
+    mode == 1 ? print_order(t->left, mode) : 
+    mode == 2 ? print_order(t->right, mode) : printf("%d ", t->data);
+    mode == 2 ? printf("%d ", t->data) : print_order(t->right, mode);
 }
