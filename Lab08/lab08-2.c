@@ -7,16 +7,16 @@ typedef struct node {
     int    data;
     struct node *left;
     struct node *right;
-} tree_t;
+} node_t;
 
 typedef node_t tree_t;
 #endif
 
-//
-//
-//
-//
-// 
+
+
+
+
+
 
 int main(void) {
     tree_t *t = NULL;
