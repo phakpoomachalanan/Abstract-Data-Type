@@ -12,11 +12,10 @@ typedef struct node {
 typedef node_t tree_t;
 #endif
 
-
-
-
-
-
+void print_preorder(tree_t* t);
+void print_postorder(tree_t* t);
+void print_inorder(tree_t* t);
+tree_t* search(tree_t* t, int mode);
 
 int main(void) {
     tree_t *t = NULL;
@@ -35,4 +34,19 @@ int main(void) {
     print_inorder(t);
 
     return 0;
+}
+
+void print_preorder(tree_t* t)
+{
+
+}
+
+void print_postorder(tree_t* t)
+{
+
+}
+
+void print_inorder(tree_t* t)
+{
+
 }
