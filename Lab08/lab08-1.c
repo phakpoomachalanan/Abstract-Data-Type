@@ -12,10 +12,10 @@ typedef struct node {
 typedef node_t tree_t;
 #endif
 
+int is_full(tree_t* t);
 
 
-
-
+int is_degenerate(tree_t* t);
 
 
 int main(void) {
@@ -30,7 +30,42 @@ int main(void) {
         t = attach(t, parent, child, branch);
     }
 
-    printf("%d %d %d %d %d\n", is_full(t), is_perfect(t), is_complete(t), is_degenerate(t), is_skewed(t));
+    //printf("%d %d %d %d %d\n", is_full(t), is_perfect(t), is_complete(t), is_degenerate(t), is_skewed(t));
+    printf("%d - - %d -\n", is_full(t), is_degenerate(t));
 
+    return 0;
+}
+
+int is_full(tree_t* t)
+{
+    if (t == NULL)
+    {
+        return 1;
+    }
+    if (t->left == NULL && t->right == NULL)
+    {
+        return 1;;
+    }
+    if (t->left != NULL && t->right != NULL)
+    {
+        return is_full(t->left) && is_full(t->right);
+    }
+    return 0;
+}
+
+int is_degenerate(tree_t* t)
+{
+    if (t == NULL)
+    {
+        return 1;
+    }
+    if (t->left == NULL && t->right == NULL)
+    {
+        return 1;
+    }
+    if ((t->left != NULL && t->right == NULL) || (t->left == NULL && t->right != NULL))
+    {
+        return is_degenerate(t->left) && is_degenerate(t->right);
+    }
     return 0;
 }
