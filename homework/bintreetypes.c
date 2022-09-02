@@ -11,14 +11,43 @@ typedef struct node {
 
 typedef node_t tree_t;
 #endif
+typedef struct queuenode {
+    struct node *child;
+    struct queuenode *next;
+} queuenode_t;
+
+typedef struct queue {
+  queuenode_t *front;
+  queuenode_t *rear;
+} queue_t;
+void enqueue(queue_t *q,tree_t *t) {
+  queuenode_t *newnode = (queuenode_t *)malloc(sizeof(queuenode_t));
+  newnode->next = NULL;
+  newnode->child = t;
+  if (q->front == NULL) {
+    q->front = newnode;
+    q->rear = newnode;
+  } else {
+    q->rear->next = newnode;
+    q->rear = newnode;
+  }
+
+}                    
+tree_t *dequeue(queue_t *q) {
+  tree_t *tmp = q->front->child;
+  queuenode_t *oldfront = q->front;
+  q->front = q->front->next;
+  free(oldfront);
+  return tmp;
+}
 
 int height(tree_t *t) {
     if (t == NULL)
     {
         return -1;
     }
-    int hl = 0;
-    int hr = 0;
+    int hl = -1;
+    int hr = -1;
     if (t->left != NULL)
         hl = height(t->left);
     if (t->right != NULL)
@@ -32,52 +61,34 @@ int height(tree_t *t) {
 }
 
 int countnode(tree_t *t) {
-    int c = 0;
+    
     if (t == NULL)
     {
         return 0;
     }
-    if (t->left != NULL)
-    {
-        c = countnode(t->left);
-    }
-    if (t->right != NULL)
-    {
-        c = countnode(t->right);
-    }
-    return c+1;
+    return (countnode(t->left)+countnode(t->right)+1);
 }
 
 int countleaf(tree_t *t) {
-    int c = 0;
+    
     if (t == NULL)
     {
         return 0;
     }
-    if (t->left != NULL)
-    {
-        c = countleaf(t->left);
-    }
-    if (t->right != NULL)
-    {
-        c = countleaf(t->right);
-    }
+
     if (t->left == NULL && t->right == NULL)
     {
-        return c+1;
+        return 1;
     }
-    return c;
+    return (countleaf(t->left)+countleaf(t->right));
     
 }
 
 int is_full(tree_t *t) {
-    /*dfs traverse throuht whole tree
-    if left == NULL xor right == NULL then return 0
-    else return 1
-    */
+    int f = 1;
     if (t == NULL)
     {
-        return 0;
+        return 1;
     }
     if ((t->left == NULL) != (t->right == NULL))
     {
@@ -86,53 +97,84 @@ int is_full(tree_t *t) {
     
     if (t->left != NULL)
     {
-        is_full(t->left);
+        f = is_full(t->left);
     }
     if (t->right != NULL)
     {
-        is_full(t->right);
+        f = is_full(t->right);
+    }
+    return f;
+}
+int Pow(int a ,int b ) {  
+    int p = 1 , i ;  
+    for (i = 1;i <= b;i++ ) {  
+        p = p * a ;  
+    }  
+    return p ;  
+}  
+int is_perfect(tree_t *t) {
+    if (t == NULL)
+    {
+        return 1;
+    }
+    int h = height(t);
+    //printf("%d %d %d %d %d\n",h,countnode(t),Pow(2,h+1)-1,countleaf(t),Pow(2,h));
+    if (countnode(t) == Pow(2,h+1)-1 && countleaf(t) == Pow(2,h))
+    {   
+        return 1;
+    } else {
+        return 0;
+    }
+    
+}
+int is_complete(tree_t *t) {
+    int f = 1;
+    if (t == NULL)
+    {
+        return 1;
+    }
+    tree_t *tmp = t;
+    queue_t *q = (queue_t *)malloc(sizeof(queue_t));
+    q->front = NULL;
+    q->rear = NULL;
+    
+    enqueue(q,tmp);
+    while (q->front != NULL)
+    {
+        tree_t *tmp = dequeue(q);
+        if (tmp->left != NULL) {
+            if (f == 0)
+            {
+                return f;
+            }
+            enqueue(q,tmp->left);
+        } else {
+            f = 0;
+        }
+            
+        
+        
+        
+        if (tmp->right != NULL) {
+            if (f == 0)
+            {
+                return f;
+            }
+            enqueue(q,tmp->right);
+        } else {
+            f = 0;
+        }
     }
     return 1;
-}
-
-int is_perfect(tree_t *t) {
-    /*dfs traverse through whole tree while counting nodes
-    h = height(t)
-    if nodecount == (2 pow h)-1 and countleaf(t) = (2 pow h)
-        return 1
-    else return 0
-    */
-    if (t == NULL)
-    {
-        return 0;
-    }
-
-}
-
-int is_complete(tree_t *t) {
-    /*dfs traverse
-    if left == NULL and right != NULL
-        return 0
-
-    if (left->left and left->right == NULL) and (right->left and right->right != NULL)
-        return 0
-    else return 1
-    */
-    if (t == NULL)
-    {
-        return 0;
-    }
+    
+    
 }
 
 int is_degenerate(tree_t *t) {
-    /*
-    if left != NULL and right != NULL
-        return 0
-    else return 1
-    */
+    int f = 1;
     if (t == NULL)
     {
-        return 0;
+        return 1;
     }
     if (t->left != NULL && t->right != NULL)
     {
@@ -141,53 +183,50 @@ int is_degenerate(tree_t *t) {
     
     if (t->left != NULL)
     {
-        is_degenerate(t->left);
+        f = is_degenerate(t->left);
     }
     if (t->right != NULL)
     {
-        is_degenerate(t->right);
+        f = is_degenerate(t->right);
     }
-    return 1;
+    return f;
 
 }
 
 int is_skewed(tree_t *t) {
-    
-    /*if root has both
-        return 0
-    if root has left child
-        if right != NULL
-            return 0
-        else return 1
-
-    if root has right child
-        if left != NULL
-            return 0
-        else return 1
-    
-    */
+    tree_t *tmp = t;
     if (t == NULL)
+    {
+        return 1;
+    }
+    
+    
+    if (t->left != NULL && t->right == NULL)
+    {
+        while (tmp->left != NULL)
+        {
+            tmp = tmp->left;
+            if (tmp->right != NULL)
+                return 0;
+        }
+        
+    }
+    
+    else if (t->right != NULL && t->left == NULL)
+    {
+        while (tmp->right != NULL)
+        {
+            tmp = tmp->right;
+            if (tmp->left != NULL)
+                return 0;
+        }
+        
+    }
+    else 
     {
         return 0;
     }
     
-    
-    if (t->left != NULL)
-    {
-        if (t->right != NULL)
-        {
-            return 0;
-        }
-        is_skewed(t->left);
-    }
-    if (t->right != NULL)
-    {
-        if (t->left != NULL)
-        {
-            return 0;
-        }
-        is_skewed(t->right);
-    }
     return 1;
     
 }
