@@ -125,8 +125,7 @@ int is_complete(tree_t *t) {
 }
 
 int is_degenerate(tree_t *t) {
-    /*if root has both
-        return 0
+    /*
     if left != NULL and right != NULL
         return 0
     else return 1
@@ -135,11 +134,20 @@ int is_degenerate(tree_t *t) {
     {
         return 0;
     }
-    if (t->left != NULL)
+    if (t->left != NULL && t->right != NULL)
     {
-        
+        return 0;
     }
     
+    if (t->left != NULL)
+    {
+        is_degenerate(t->left);
+    }
+    if (t->right != NULL)
+    {
+        is_degenerate(t->right);
+    }
+    return 1;
 
 }
 
@@ -162,6 +170,26 @@ int is_skewed(tree_t *t) {
     {
         return 0;
     }
+    
+    
+    if (t->left != NULL)
+    {
+        if (t->right != NULL)
+        {
+            return 0;
+        }
+        is_skewed(t->left);
+    }
+    if (t->right != NULL)
+    {
+        if (t->left != NULL)
+        {
+            return 0;
+        }
+        is_skewed(t->right);
+    }
+    return 1;
+    
 }
 
 int main(void) {
