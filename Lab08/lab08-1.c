@@ -16,7 +16,7 @@ int is_full(tree_t* t);
 
 
 int is_degenerate(tree_t* t);
-
+int is_skewed(tree_t* t);
 
 int main(void) {
     tree_t *t = NULL;
@@ -31,7 +31,7 @@ int main(void) {
     }
 
     //printf("%d %d %d %d %d\n", is_full(t), is_perfect(t), is_complete(t), is_degenerate(t), is_skewed(t));
-    printf("%d - - %d -\n", is_full(t), is_degenerate(t));
+    printf("%d - - %d %d\n", is_full(t), is_degenerate(t), is_skewed(t));
 
     return 0;
 }
@@ -63,9 +63,17 @@ int is_degenerate(tree_t* t)
     {
         return 1;
     }
-    if ((t->left != NULL && t->right == NULL) || (t->left == NULL && t->right != NULL))
+    if ((t->left != NULL) != (t->right != NULL))
     {
         return is_degenerate(t->left) && is_degenerate(t->right);
     }
     return 0;
+}
+
+int is_skewed(tree_t* t)
+{
+    if (t == NULL)
+    {
+        return 0;
+    }
 }
