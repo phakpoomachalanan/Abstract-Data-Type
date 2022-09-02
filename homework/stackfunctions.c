@@ -38,8 +38,6 @@ stack_t *pop(stack_t *s) {
     if (s !=NULL)
         s = node->next;
         free(node);
-        
-    
     return s;
 }
 
