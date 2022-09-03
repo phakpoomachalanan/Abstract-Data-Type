@@ -11,25 +11,43 @@ typedef struct  node {
 
 typedef node_t tree_t;
 #endif
-
-void print_preorder(tree_t *t) {
+void preorder(tree_t *t) {
   printf("%d ",t->data);
-  print_preorder(t->left);
-  print_preorder(t->right);
+  if (t->left != NULL) {
+    preorder(t->left);}
+  if (t->right != NULL) {
+    preorder(t->right);}
+}
+int print_preorder(tree_t *t) {
+  preorder(t);
   printf("\n");
 }
 
+void posorder(tree_t *t) {
+  if (t->left != NULL) {
+    posorder(t->left);
+  }
+  if (t->right != NULL) {
+    posorder(t->right);
+  }
+  printf("%d ",t->data);
+}
 void print_posorder(tree_t *t) {
-  printf("%d ",t->data);
-  print_preorder(t->left);
-  print_preorder(t->right);
+  posorder(t);
   printf("\n");
 }
 
-void print_inorder(tree_t *t) {
+void inorder(tree_t *t) {
+  if (t->left != NULL) {
+    inorder(t->left);
+  }
   printf("%d ",t->data);
-  print_preorder(t->left);
-  print_preorder(t->right);
+  if (t->right != NULL) {
+    inorder(t->right);
+  }
+}
+void print_inorder(tree_t *t) {
+  inorder(t);
   printf("\n");
 }
 
