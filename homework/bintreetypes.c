@@ -40,7 +40,17 @@ tree_t *dequeue(queue_t *q) {
   free(oldfront);
   return tmp;
 }
+int Pow(int x, int y) {
 
+	int power = 1, i;
+
+	for (i = 1; i <= y; ++i) {
+		power = power * x;
+	}
+
+	return power;
+
+}
 int height(tree_t *t) {
     if (t == NULL)
     {
@@ -97,29 +107,33 @@ int is_full(tree_t *t) {
     
     if (t->left != NULL)
     {
+        if (f == 0)
+        {
+            return 0;
+        }
         f = is_full(t->left);
+
     }
     if (t->right != NULL)
     {
+        if (f == 0)
+        {
+            return 0;
+        }
         f = is_full(t->right);
     }
     return f;
+    
+        
 }
-int Pow(int a ,int b ) {  
-    int p = 1 , i ;  
-    for (i = 1;i <= b;i++ ) {  
-        p = p * a ;  
-    }  
-    return p ;  
-}  
+
 int is_perfect(tree_t *t) {
     if (t == NULL)
     {
         return 1;
     }
     int h = height(t);
-    //printf("%d %d %d %d %d\n",h,countnode(t),Pow(2,h+1)-1,countleaf(t),Pow(2,h));
-    if (countnode(t) == Pow(2,h+1)-1 && countleaf(t) == Pow(2,h))
+    if (countnode(t) == Pow(2,h+1)-1)
     {   
         return 1;
     } else {
@@ -145,20 +159,17 @@ int is_complete(tree_t *t) {
         if (tmp->left != NULL) {
             if (f == 0)
             {
-                return f;
+                return 0;
             }
             enqueue(q,tmp->left);
         } else {
             f = 0;
         }
-            
-        
-        
-        
+
         if (tmp->right != NULL) {
             if (f == 0)
             {
-                return f;
+                return 0;
             }
             enqueue(q,tmp->right);
         } else {
@@ -183,10 +194,18 @@ int is_degenerate(tree_t *t) {
     
     if (t->left != NULL)
     {
+        if (f == 0)
+        {
+            return 0;
+        }
         f = is_degenerate(t->left);
     }
     if (t->right != NULL)
     {
+        if (f == 0)
+        {
+            return 0;
+        }
         f = is_degenerate(t->right);
     }
     return f;
@@ -199,7 +218,9 @@ int is_skewed(tree_t *t) {
     {
         return 1;
     }
-    
+    if (height(t) == 0) {
+        return 1;
+    }
     
     if (t->left != NULL && t->right == NULL)
     {
@@ -222,6 +243,7 @@ int is_skewed(tree_t *t) {
         }
         
     }
+    
     else 
     {
         return 0;
