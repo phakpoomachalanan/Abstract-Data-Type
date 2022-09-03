@@ -72,8 +72,22 @@ int is_degenerate(tree_t* t)
 
 int is_skewed(tree_t* t)
 {
+    static int left = 0;
+    static int right = 0;
     if (t == NULL)
     {
-        return 0;
+        return 1;
     }
+
+    if (t->left != NULL)
+    {
+        left++;
+        is_skewed(t->left);
+    }
+    if (t->right != NULL)
+    {
+        right++;
+        is_skewed(t->right);
+    }
+    return (left == 0 && right != 0) || (left != 0 && right == 0);
 }
