@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <week8.h>
+#include "week8.h"
 
 #ifndef __bin_tree__
 typedef struct  node {
@@ -11,6 +11,27 @@ typedef struct  node {
 
 typedef node_t tree_t;
 #endif
+
+void print_preorder(tree_t *t) {
+  printf("%d ",t->data);
+  print_preorder(t->left);
+  print_preorder(t->right);
+  printf("\n");
+}
+
+void print_posorder(tree_t *t) {
+  printf("%d ",t->data);
+  print_preorder(t->left);
+  print_preorder(t->right);
+  printf("\n");
+}
+
+void print_inorder(tree_t *t) {
+  printf("%d ",t->data);
+  print_preorder(t->left);
+  print_preorder(t->right);
+  printf("\n");
+}
 
 int main(void) {
   tree_t *t = NULL;
