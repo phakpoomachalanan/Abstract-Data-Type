@@ -117,6 +117,10 @@ int is_complete(tree_t* t)
     int leaf[max_leaf];
     int now;
     init(leaf, max_leaf);
+    if (t->left == NULL && t->right == NULL)
+    {
+        return 1;
+    }
     if (is_degenerate(t) == 1 || is_skewed(t) == 1)
     {
         return 0;
