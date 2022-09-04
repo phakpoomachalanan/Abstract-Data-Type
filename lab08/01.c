@@ -12,6 +12,8 @@ typedef struct  node {
 
 typedef node_t tree_t;
 #endif
+
+
 int height(tree_t *t) {
   static int hl;
   static int hr;
@@ -53,16 +55,82 @@ int is_prefect(tree_t *t){
   }
 }
 int is_complete(tree_t *t) {
-  bfs [100];
-  bfs[0] = 1;
-  int count = 0;
-  while bfs]
+  int max  = 100;
+  int i;
+  int count = 2;
+  tree_t *bfs [100];
+  for (i=0;i<max;i++) {
+    bfs[i] = NULL;
+  }
+  i = 1;
+  if (t==NULL) {
+    return 0;
+  } else {
+    bfs[i] = t;
+  }
+  while (count<max && i<max) {
+    if (bfs[i] != NULL) {
+      bfs[count] = bfs[i]->left; count++;
+      bfs[count] = bfs[i]->right; count++;
+    }
+    i++;
+  }
+  int check = 0;
+  for (i=1;i<max;i++) {
+    if (bfs[i] == NULL && check == 0) {
+      check = 1;
+    }
+    if (bfs[i] != NULL && check == 1) {
+      return 0;
+    }
+  }
+  return 1;
 }
 int is_degenerate(tree_t *t) {
+  if (t->left != NULL && t->right != NULL) {
+    return 0;
+  }
+  if (t->left != NULL) {
+    is_degenerate(t->left);
+  }
+  if (t->right != NULL) {
+    is_degenerate(t->right);
+  }
+  return 1;
+}
+int is_skewed_left(tree_t *t) {
+  if (t->right == NULL) {
+    if (t->left != NULL) {
+      is_skewed_left(t->left);
+    } else {
+      return 1;
+    }
+  } else {
+    return 0;
+  }
 
 }
+int is_skewed_right(tree_t *t) {
+  if (t->left == NULL) {
+    if (t->right != NULL) {
+      is_skewed_right(t->right);
+    } else {
+      return 1;
+    }
+  } else {
+    return 0;
+  }
+}
 int is_skewed(tree_t *t) {
-
+  if (t->left != NULL && t->right != NULL) {
+    return 0;
+  }
+  if (t->left != NULL) {
+    return is_skewed_left(t);
+  }
+  if (t->right != NULL) {
+    return is_skewed_right(t);
+  }
 }
 int main(void) {
   tree_t *t = NULL;
