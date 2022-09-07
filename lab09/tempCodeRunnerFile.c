@@ -26,8 +26,6 @@ bst_t *insert(bst_t *t, int v) {
         temp = temp->left;
       } else if (v>temp->data) {
         temp = temp->right;
-      } else {
-        break;
       }
     }
   }
@@ -60,8 +58,6 @@ bst_t *delete(bst_t *t, int v) {
       temp = temp->right;
     } else if (temp->left->data > v) {
       temp = temp->left;
-    } else {
-      break;
     }
   }
   //printf("[%d]",temp->data);
