@@ -14,6 +14,13 @@ typedef node_t avl_t;
 // ** Note that the print_tree() function
 // has been implemented already and
 // included in the week9.h header
+
+avl_t *insert(avl_t *t, int v) {
+
+}
+avl_t *delete(avl_t *t, int data) {
+
+}
 // ...
 int main(void) {
   avl_t *t = NULL;
