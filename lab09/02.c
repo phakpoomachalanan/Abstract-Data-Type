@@ -126,18 +126,17 @@ avl_t *optimize(avl_t *t, int v) {
 }
 
 avl_t *find_for_op(avl_t *t, int v,avl_t *temp) {
-  if (v < temp->data) {
-    temp = find_for_op(t, v, temp->left);
-    t = optimize(t,temp->data);
-  } else if (v > temp->data) {
-    temp = find_for_op(t, v, temp->right);
-    printf("[%dT]\n",temp->data);
-    t = optimize(t,temp->data);
-
-  } else if (temp->data == v) {
+  if (temp->data < v) {
+    temp = find_for_op(t,v,temp->right);
+    printf("[%d]",temp->data);
+    t = optimize(t, temp->data);
+  } else if (temp->data > v) {
+    temp = find_for_op(t,v,temp->left);
+    printf("[%d]",temp->data);
+    t = optimize(t, temp->data);
+  } else {
     return temp;
   }
-  
 }
 avl_t *insert(avl_t *t, int v) {
   avl_t *temp = t;
