@@ -127,6 +127,7 @@ avl_t *optimize(avl_t *t, int v) {
 
 avl_t *find_for_op(avl_t *t, int v,avl_t *temp) {
   if (temp->data < v) {
+<<<<<<< Updated upstream
     temp = find_for_op(t,v,temp->right);
     printf("[%d]",temp->data);
     t = optimize(t, temp->data);
@@ -136,6 +137,13 @@ avl_t *find_for_op(avl_t *t, int v,avl_t *temp) {
     t = optimize(t, temp->data);
   } else {
     return temp;
+=======
+    find_for_op(t,v,temp->right);
+  } else if (temp->data > v) {
+    find_for_op(t,v,temp->left);
+  } else {
+
+>>>>>>> Stashed changes
   }
 }
 avl_t *insert(avl_t *t, int v) {
