@@ -15,7 +15,7 @@ typedef node_t avl_t;
 // has been implemented already and
 // included in the week9.h header
 avl_t *find_parent(avl_t *t, int v,avl_t *parent) {
-  printf("[%dv][%dt]",v,t->data);
+  //printf("[%dv][%dt]",v,t->data);
   if (v < t->data) {
       parent = t;
       find_parent(t->left, v,parent);
@@ -44,7 +44,7 @@ avl_t *right_Ro (avl_t *t,avl_t *a) {
   a->left = b->right;
   b->right = a;
   if (parent != NULL) {
-    printf("(%d)",parent->data);
+    //printf("(%d)",parent->data);
     parent->height -= 1;
     if (parent->data > a->data) {
       parent->left = b;
@@ -64,7 +64,7 @@ avl_t *left_Ro (avl_t *t,avl_t *a) {
   a->right = b->left;
   b->left = a;
   if (parent != NULL) {
-    printf("(%d)",parent->data);
+    //printf("(%d)",parent->data);
     parent->height -= 1;
     if (parent->data > a->data) {
       parent->left = b;
@@ -87,18 +87,13 @@ avl_t *check(avl_t *t, int v) {
         break;
       }
   }
-  
+  t->height = height(t);
   printf("[%d]",t->data);
   if (t->left == NULL && t->right == NULL) {
     return NULL;
   }
   if (t->right != NULL && t->left != NULL) {
-    if (t->left->height > t->right->height) {
-      t->height = t->left->height+1;
-    } else {
-      t->height = t->right->height+1;
-    }
-    printf("{%d}[%dLH][%dLR]",t->height,t->left->height,t->right->height);
+    //printf("{%d}[%dLH][%dLR]",t->height,t->left->height,t->right->height);
     if ((t->left->height)-(t->right->height) > 1 || (t->left->height)-(t->right->height) < -1) {
       return t;
     } else {
@@ -115,6 +110,7 @@ avl_t *check(avl_t *t, int v) {
   }
 }
 avl_t *optimize(avl_t *t, int v) {
+  //printf("[%d]",t->data);
   avl_t *a = check(t,v);
   if (a == NULL) {
     return t;
@@ -227,13 +223,19 @@ avl_t *optimize(avl_t *t, int v) {
 avl_t *find_for_op(avl_t *t, int v,avl_t *temp) {
   if (temp->data < v) {
     find_for_op(t,v,temp->right);
-    printf("[%d]",temp->data);
+    //printf("[%d]",temp->data);
     t = optimize(t, temp->data);
   } else if (temp->data > v) {
     find_for_op(t,v,temp->left);
-    printf("[%d]",temp->data);
+    //printf("[%d]",temp->data);
     t = optimize(t, temp->data);
   } else {
+    t = optimize(t, temp->data);
+    if (t->right != NULL) {
+      optimize(t, temp->right->data);
+    } else if (t->left != NULL) {
+      optimize(t, temp->left->)
+    }
     return temp;
     
   }
@@ -273,13 +275,29 @@ avl_t *insert(avl_t *t, int v) {
   temp = t;
   return find_for_op(t,v,temp);
 }
+avl_t *find_min_p(avl_t *t) {
+  if (t->left != NULL) {
+    find_min_p(t->left);
+  } else {
+    return t;
+  }
+}
 avl_t *delete_pre(avl_t *t, int v);
 avl_t *delete(avl_t *t, int v) {
-  avl_t *P = NULL;
   avl_t *parent = find_parent(t,v,NULL);
-  t = delete_pre(t,v);
-  avl_t *temp = t;
-  return find_for_op(t,parent->data,temp);
+  if (parent == NULL) {
+    avl_t *min = find_min_p(t->right);
+    avl_t *parent_right = find_parent(t,min->data,NULL);  
+    t = delete_pre(t,v);
+    avl_t *temp = t;
+    return find_for_op(t,parent_right->data,temp); 
+  } else {
+    t = delete_pre(t,v);
+    avl_t *temp = t;
+    //printf("parent%d",parent->data);
+    return find_for_op(t,parent->data,temp);
+  }
+  
 }
 // ...
 int main(void) {
@@ -306,19 +324,13 @@ int main(void) {
   return 0;
 }
 
-avl_t *find_min_p(avl_t *t) {
-  if (t->left != NULL) {
-    find_min_p(t->left);
-  } else {
-    return t;
-  }
-}
+
 avl_t *delete_pre(avl_t *t, int v) {
   avl_t *parent = NULL;
   avl_t *node = NULL;
   parent = find_parent(t,v,parent);
   if (parent == NULL) {
-    node = t;
+    node = t; 
   } else if (parent->data > v) {
     node = parent->left;
   } else {
