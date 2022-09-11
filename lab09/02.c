@@ -26,7 +26,7 @@ avl_t *find_parent(avl_t *t, int v,avl_t *parent) {
       return parent;
   } 
 }
-int height(avl_t *t) {
+int height(tree_t *t) {
   static int hl;
   static int hr;
   if (t == NULL) {
@@ -83,16 +83,20 @@ avl_t *check(avl_t *t, int v) {
       } else if (t->data > v) {
         t = t->left;
       } else {
-
         break;
       }
   }
-  t->height = height(t);
-  printf("[%d]",t->data);
+  //printf("[%d]",t->data);
   if (t->left == NULL && t->right == NULL) {
+    t->height = 0;
     return NULL;
   }
   if (t->right != NULL && t->left != NULL) {
+    if (t->left->height > t->right->height) {
+      t->height = t->left->height+1;
+    } else {
+      t->height = t->right->height+1;
+    }
     //printf("{%d}[%dLH][%dLR]",t->height,t->left->height,t->right->height);
     if ((t->left->height)-(t->right->height) > 1 || (t->left->height)-(t->right->height) < -1) {
       return t;
@@ -231,11 +235,6 @@ avl_t *find_for_op(avl_t *t, int v,avl_t *temp) {
     t = optimize(t, temp->data);
   } else {
     t = optimize(t, temp->data);
-    if (t->right != NULL) {
-      optimize(t, temp->right->data);
-    } else if (t->left != NULL) {
-      optimize(t, temp->left->)
-    }
     return temp;
     
   }
@@ -341,9 +340,20 @@ avl_t *delete_pre(avl_t *t, int v) {
       return NULL;
     } else if (parent->data > v) {
       parent->left = NULL;
+      if (parent->right != NULL) {
+        parent->height = parent->right->height+1;
+      } else {
+        parent->height = 0;
+      }
     } else {
       parent->right = NULL;
+      if (parent->right != NULL) {
+        parent->height = parent->left->height+1;
+      } else {
+        parent->height = 0;
+      }
     }
+    
   } else if (node->left == NULL && node->right != NULL) {
     if (parent == NULL) {
       t = node->right;
@@ -352,6 +362,7 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else {
       parent->right = node->right;
     }
+    parent->height = node->right->height;
   } else if (node->left != NULL && node->right == NULL) {
     if (parent == NULL) {
       t = node->left;
@@ -360,6 +371,7 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else {
       parent->right = node->left;
     }
+    parent->height = node->left->height;
   } else {
     avl_t *right_min = find_min_p(node->right);
     avl_t *parent_right_min = NULL;
@@ -378,7 +390,24 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else {
       parent->right = right_min;
     }
+    parent_right_min->height -= right_min->height+1;
+    if (right_min->left != NULL && right_min->right != NULL) {
+      if (right_min->left->height > right_min->right->height) {
+        right_min->height = (right_min->left->height)+1;
+      } else if (right_min->left->height < right_min->right->height){
+        right_min->height = right_min->right->height+1;
+      } else {
+        right_min->height = (right_min->left->height)+1;
+      }
+    } else if (right_min->left == NULL) {
+      right_min->height = right_min->right->height+1;
+    } else if (right_min->right == NULL) {
+      right_min->height = right_min->left->height+1;
+    }
+    free(node);
+    return t;
   }
+  parent->height = height(parent);
   free(node);
   return t;
 } 

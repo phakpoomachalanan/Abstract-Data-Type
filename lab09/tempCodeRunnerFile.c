@@ -26,16 +26,7 @@ avl_t *find_parent(avl_t *t, int v,avl_t *parent) {
       return parent;
   } 
 }
-int height(avl_t *t) {
-  static int hl;
-  static int hr;
-  if (t == NULL) {
-    return -1;
-  }
-  hl = height(t->left);
-  hr = height(t->right);
-  return (hl>hr)? hl+1 : hr+1;
-}
+
 avl_t *right_Ro (avl_t *t,avl_t *a) {
   a->height -= 2;
   avl_t *parent = NULL;
@@ -83,16 +74,20 @@ avl_t *check(avl_t *t, int v) {
       } else if (t->data > v) {
         t = t->left;
       } else {
-
         break;
       }
   }
-  t->height = height(t);
   //printf("[%d]",t->data);
   if (t->left == NULL && t->right == NULL) {
+    t->height = 0;
     return NULL;
   }
   if (t->right != NULL && t->left != NULL) {
+    if (t->left->height > t->right->height) {
+      t->height = t->left->height+1;
+    } else {
+      t->height = t->right->height+1;
+    }
     //printf("{%d}[%dLH][%dLR]",t->height,t->left->height,t->right->height);
     if ((t->left->height)-(t->right->height) > 1 || (t->left->height)-(t->right->height) < -1) {
       return t;
@@ -339,6 +334,7 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else {
       parent->right = NULL;
     }
+    parent->height -= 1;
   } else if (node->left == NULL && node->right != NULL) {
     if (parent == NULL) {
       t = node->right;
@@ -347,6 +343,7 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else {
       parent->right = node->right;
     }
+    parent->height = node->right->height;
   } else if (node->left != NULL && node->right == NULL) {
     if (parent == NULL) {
       t = node->left;
@@ -355,9 +352,9 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else {
       parent->right = node->left;
     }
+    parent->height = node->left->height;
   } else {
     avl_t *right_min = find_min_p(node->right);
-    right_min->height += 1;
     avl_t *parent_right_min = NULL;
     parent_right_min = find_parent(t,right_min->data,parent_right_min);
     if (parent_right_min == node) {
@@ -374,7 +371,24 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else {
       parent->right = right_min;
     }
+    parent_right_min->height -= right_min->height+1;
+    if (right_min->left != NULL && right_min->right != NULL) {
+      if (right_min->left->height > right_min->right->height) {
+        right_min->height = (right_min->left->height)+1;
+      } else if (right_min->left->height < right_min->right->height){
+        right_min->height = right_min->right->height+1;
+      } else {
+        right_min->height = (right_min->left->height)+1;
+      }
+    } else if (right_min->left == NULL) {
+      right_min->height = right_min->right->height+1;
+    } else if (right_min->right == NULL) {
+      right_min->height = right_min->left->height+1;
+    }
+    free(node);
+    return t;
   }
+  
   free(node);
   return t;
 } 
