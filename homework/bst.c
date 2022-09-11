@@ -159,51 +159,42 @@ int is_leaf(bst_t *t) {
 
 
 bst_t *delete(bst_t *t,int value) {
-    bst_t *pos = findpos(t,value);
-    bst_t *parpos = findparpos(t,value);
-    //case 1 ; is leaf
-    if (pos->left == NULL && pos->right == NULL)
+    if (t == NULL)
     {
-        if (parpos->left != NULL)
+        return t;
+    }
+    if (value == t->data) //delete root
+    {
+        if (t->left == NULL)
         {
-            parpos->left = NULL;
+            bst_t *tmp = t->right;
+            free(t);
+            return tmp;
         }
-        if (parpos->right != NULL)
+        else if (t->right == NULL)
         {
-            parpos->right = NULL;
+            bst_t *tmp = t->left;
+            free(t);
+            return tmp;
         }
         
-        free(pos);
-        return t;
+        int minvalue = find_min(t->right);
+        t->data = minvalue;
+        t->right = delete(t->right,minvalue);
+
+    }
+    else if (value < t->data) //recurse until found node with the value
+    {
+        t->left = delete(t->left,value);
+    }
+    else if (value > t->data)
+    {
+        t->right = delete(t->right,value);
     }
     
-    
-    //case 2 ; 1 child
-    if ((pos->left == NULL) != (pos->right == NULL))
-    {
-        if (pos->left != NULL)
-        {
-            parpos->left = pos->left;
-        }
-        if (pos->right != NULL)
-        {
-            parpos->right = pos->right;
-        }
-        free(pos);
-        return t;
-    }
-    //case 3 ; 2 children
-    if (pos->left != NULL && pos->right != NULL)
-    {
-        bst_t *rightroot = pos->right;
-        int minvalue = find_min(rightroot);
-        delete(t,minvalue);
-        pos->data = minvalue;
-    }
     return t;
+
 }
-
-
 int main(void) {
 bst_t *t = NULL;
 int n, i;
