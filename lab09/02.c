@@ -14,14 +14,14 @@ typedef node_t avl_t;
 // ** Note that the print_tree() function
 // has been implemented already and
 // included in the week9.h header
-avl_t *find_parent(avl_t *t, int v) {
-  static avl_t *parent = NULL;
+avl_t *find_parent(avl_t *t, int v,avl_t *parent) {
+  printf("[%dv][%dt]",v,t->data);
   if (v < t->data) {
       parent = t;
-      find_parent(t->left, v);
+      find_parent(t->left, v,parent);
   } else if (v > t->data) {
       parent = t;
-      find_parent(t->right, v);
+      find_parent(t->right, v,parent);
   } else if (t->data == v) {
       return parent;
   } 
@@ -38,12 +38,14 @@ int height(avl_t *t) {
 }
 avl_t *right_Ro (avl_t *t,avl_t *a) {
   a->height -= 2;
-  avl_t *parent = find_parent(t,a->data);
+  avl_t *parent = NULL;
+  parent = find_parent(t,a->data,parent);
   avl_t *b = a->left;
-  b->height -= 1;
   a->left = b->right;
   b->right = a;
   if (parent != NULL) {
+    printf("(%d)",parent->data);
+    parent->height -= 1;
     if (parent->data > a->data) {
       parent->left = b;
     } else {
@@ -56,12 +58,14 @@ avl_t *right_Ro (avl_t *t,avl_t *a) {
 }
 avl_t *left_Ro (avl_t *t,avl_t *a) {
   a->height -= 2;
-  avl_t *parent = find_parent(t,a->data);
+  avl_t *parent = NULL;
+  parent = find_parent(t,a->data,parent);
   avl_t *b = a->right;
-  b->height -= 1;
   a->right = b->left;
   b->left = a;
   if (parent != NULL) {
+    printf("(%d)",parent->data);
+    parent->height -= 1;
     if (parent->data > a->data) {
       parent->left = b;
     } else {
@@ -79,15 +83,26 @@ avl_t *check(avl_t *t, int v) {
       } else if (t->data > v) {
         t = t->left;
       } else {
-        return NULL;
+
+        break;
       }
   }
+  
+  printf("[%d]",t->data);
   if (t->left == NULL && t->right == NULL) {
     return NULL;
   }
   if (t->right != NULL && t->left != NULL) {
+    if (t->left->height > t->right->height) {
+      t->height = t->left->height+1;
+    } else {
+      t->height = t->right->height+1;
+    }
+    printf("{%d}[%dLH][%dLR]",t->height,t->left->height,t->right->height);
     if ((t->left->height)-(t->right->height) > 1 || (t->left->height)-(t->right->height) < -1) {
       return t;
+    } else {
+      return NULL;
     }
   } else {
     if (t->right == NULL && t->left->height > 0) {
@@ -103,20 +118,104 @@ avl_t *optimize(avl_t *t, int v) {
   avl_t *a = check(t,v);
   if (a == NULL) {
     return t;
-  } else if (((a->left->height - a->right->height) > 1) || (a->right == NULL)) {
+  } else if ((a->right == NULL)) {
     avl_t *b = a->left;
-    if (b->left->height > b->right->height) {
-      t = right_Ro(t,a);
-    } else if (b->left->height < b->right->height) {
-      t = left_Ro(t,b);
-      t = right_Ro(t,a);
+    int blh;
+    int brh;
+    if (b->left == NULL) {
+      blh = -1;
+    } else {
+      blh = b->left->height;
     }
-  } else if (((a->left->height - a->right->height) < -1) || (a->left == NULL)) {
+    if (b->right == NULL) {
+      brh = -1;
+    } else {
+      brh = b->right->height;
+    }
+    if (blh > brh) {
+      t = right_Ro(t,a);
+    } else if (blh < brh) {
+      t = left_Ro(t,b);
+      b->height+=1;
+      t = right_Ro(t,a);
+      a->height+=1;
+      avl_t *parent = NULL;
+      parent = find_parent(t,a->data,parent);
+      parent->height+=1;
+    }
+  } else if ((a->left == NULL)) {
     avl_t *b = a->right;
-    if (b->left->height > b->right->height) {
+    int blh;
+    int brh;
+    if (b->left == NULL) {
+      blh = -1;
+    } else {
+      blh = b->left->height;
+    }
+    if (b->right == NULL) {
+      brh = -1;
+    } else {
+      brh = b->right->height;
+    }
+    if (blh > brh) {
       t = right_Ro(t,b);
+      b->height+=1;
       t = left_Ro(t,a);
-    } else if (b->left->height < b->right->height) {
+      a->height+=1;
+      avl_t *parent = NULL;
+      parent = find_parent(t,a->data,parent);
+      parent->height+=1;
+    } else if (blh < brh) {
+      t = left_Ro(t,a);
+    }
+  } else if (((a->left->height - a->right->height) > 1)) {
+    avl_t *b = a->left;
+    int blh;
+    int brh;
+    if (b->left == NULL) {
+      blh = -1;
+    } else {
+      blh = b->left->height;
+    }
+    if (b->right == NULL) {
+      brh = -1;
+    } else {
+      brh = b->right->height;
+    }
+    if (blh > brh) {
+      t = right_Ro(t,a);
+    } else if (blh < brh) {
+      t = left_Ro(t,b);
+      b->height+=1;
+      t = right_Ro(t,a);
+      a->height+=1;
+      avl_t *parent = NULL;
+      parent = find_parent(t,a->data,parent);
+      parent->height+=1;
+    }
+  } else if (((a->left->height - a->right->height) < -1)) {
+    avl_t *b = a->right;
+    int blh;
+    int brh;
+    if (b->left == NULL) {
+      blh = -1;
+    } else {
+      blh = b->left->height;
+    }
+    if (b->right == NULL) {
+      brh = -1;
+    } else {
+      brh = b->right->height;
+    }
+    if (blh > brh) {
+      t = right_Ro(t,b);
+      b->height+=1;
+      t = left_Ro(t,a);
+      a->height+=1;
+      avl_t *parent = NULL;
+      parent = find_parent(t,a->data,parent);
+      parent->height+=1;
+    } else if (blh < brh) {
       t = left_Ro(t,a);
     }
   } else {
@@ -255,7 +354,8 @@ avl_t *delete_pre(avl_t *t, int v) {
       //printf("[case 4]");
       avl_t *right_min_p = find_min_p(temp->right);
       //printf("[%dmin]",right_min_p->data);
-      avl_t *parent_right  = find_parent(t,right_min_p->data);
+      avl_t *parent_right = NULL;
+      parent_right  = find_parent(t,right_min_p->data,parent_right);
       if (parent == NULL && parent_right->data == t->data) {
         parent_right->right = right_min_p->right;
       } else {
@@ -307,7 +407,8 @@ avl_t *delete_pre(avl_t *t, int v) {
     } else if (temp->left != NULL && temp->right != NULL) {
       //printf("[case 5]");
       avl_t *right_min_p = find_min_p(temp->right);
-      avl_t *parent_right  = find_parent(t,right_min_p->data);
+      avl_t *parent_right = NULL;
+      parent_right  = find_parent(t,right_min_p->data,parent_right);
       //printf("[%dmin]",right_min_p->data);
       if (parent == NULL && parent_right->data == t->data) {
         parent_right->right = right_min_p->right;

@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <windows.h>
 #ifndef __avl_tree__
 #define __avl_tree__
 typedef struct node{
@@ -19,7 +19,8 @@ void print_tree_2(avl_t *t, int depth, char pre){
     return;
   for (i=0; i<depth; i++)
     printf("    ");
-  printf("%c%d\n", pre, t->data);
+  printf("%c%d[%d]\n", pre, t->data,t->height);
+  Sleep(200);
   print_tree_2(t->left, depth+1, 'L');
   print_tree_2(t->right, depth+1, 'R');
 }
