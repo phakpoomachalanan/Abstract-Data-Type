@@ -38,137 +38,74 @@ bst_t *find_min_p(bst_t *t) {
     return t;
   }
 }
-bst_t *find_parent(bst_t *t, int v) {
-  static bst_t *parent = NULL;
+bst_t *find_parent(bst_t *t, int v,bst_t *parent) {
   if (v < t->data) {
       parent = t;
-      find_parent(t->left, v);
+      find_parent(t->left, v,parent);
   } else if (v > t->data) {
       parent = t;
-      find_parent(t->right, v);
+      find_parent(t->right, v,parent);
   } else if (t->data == v) {
       return parent;
   } 
 }
-bst_t *delete(bst_t *t, int v) {
-  bst_t *temp = t;
-  bst_t *parent = NULL;
-  while(1) {//find v parent
- //printf("[%d]",temp->data);
-    if (t->data == v) {
-      temp = t;
-      break;
-    }
-    if (v < temp->data) {
-        parent = temp;
-        temp = temp->left;
-    } else if (v > temp->data) {
-        parent = temp;
-        temp = temp->right;
-    } else if (temp->data == v) {
-        break;
-    } 
-  }
-  if (parent != NULL) {
-    //printf("[%dparent]",parent->data);
-  }
-  //printf("[%dtemp]",temp->data);
-  //case parent == NULL
-  if (parent == NULL) {
-    //printf("NULL");
-    if (temp->left == NULL && temp->right == NULL) {
-      //printf("[case 1]");
-      return NULL;
-    } else if (temp->left != NULL && temp->right == NULL) {
-      //printf("[case 2]");
-      bst_t *temp2 = temp->left;
-      free(temp);
-      return temp2;
-    } else if (temp->left == NULL && temp->right != NULL) {
-      //printf("[case 3]");
-      bst_t *temp2 = temp->right;
-      free(temp);
-      return temp2;
-    } else if (temp->left != NULL && temp->right != NULL) {
-      //printf("[case 4]");
-      bst_t *right_min_p = find_min_p(temp->right);
-      //printf("[%dmin]",right_min_p->data);
-      bst_t *parent_right  = find_parent(t,right_min_p->data);
-      if (parent == NULL && parent_right->data == t->data) {
-        parent_right->right = right_min_p->right;
-      } else {
-        //printf("[%dP]",parent_right->data);
-        parent_right->left = right_min_p->right;
-      }
-      right_min_p->right = NULL;
-      if (temp->right != right_min_p) {
-        right_min_p->right = temp->right;
-      }
-      //printf("[%dL]",temp->left->data);
-      right_min_p->left = temp->left;
-      //printf("[%dR]",right_min_p->right->data);
-      free(temp);
-      return right_min_p;
-    }
-  }
 
-  //case parent != NULL
-  else {
-    if (temp->left == NULL && temp->right == NULL && temp->data < parent->data) {
-      //printf("[case 1]");
+bst_t *delete(bst_t *t, int v) {
+  bst_t *parent = NULL;
+  bst_t *node = NULL;
+  parent = find_parent(t,v,parent);
+  if (parent == NULL) {
+    node = t;
+  } else if (parent->data > v) {
+    node = parent->left;
+  } else {
+    node = parent->right;
+  }
+  if (node->left == NULL && node->right == NULL) {
+    if (parent == NULL) {
+      return NULL;
+    } else if (parent->data > v) {
       parent->left = NULL;
-      free(temp);
-      return t;
-    } else if (temp->left == NULL && temp->right == NULL && temp->data > parent->data){
-      //printf("[case 2]");
+    } else {
       parent->right = NULL;
-      free(temp);
-      return t;
-    } else if (temp->left != NULL && temp->right == NULL) {
-      //printf("[case 3]");
-      if (temp->data < parent->data) {
-        parent->left = temp->left;
-      } else {
-        parent->right = temp->left;
-      }
-      free(temp);
-      return t;
-    } else if (temp->left == NULL && temp->right != NULL) {
-      //printf("[case 4]");
-      if (temp->data < parent->data) {
-        parent->left = temp->right;
-      } else {
-        parent->right = temp->right;
-      }
-      free(temp);
-      return t;
-    } else if (temp->left != NULL && temp->right != NULL) {
-      //printf("[case 5]");
-      bst_t *right_min_p = find_min_p(temp->right);
-      bst_t *parent_right  = find_parent(t,right_min_p->data);
-      //printf("[%dmin]",right_min_p->data);
-      if (parent == NULL && parent_right->data == t->data) {
-        parent_right->right = right_min_p->right;
-      } else {
-        //printf("[%dP]",parent_right->data);
-        parent_right->left = right_min_p->right;
-      }
-      right_min_p->right = NULL;
-      if (temp->right != right_min_p) {
-        right_min_p->right = temp->right;
-      }
-      //printf("[%dL]",temp->left->data);
-      right_min_p->left = temp->left;
-      if (right_min_p->data < parent->data) {
-        parent->left = right_min_p;
-      } else {
-        parent->right = right_min_p;
-      }
-      //printf("[%dR]",right_min_p->right->data);
-      free(temp);
-      return t;
+    }
+  } else if (node->left == NULL && node->right != NULL) {
+    if (parent == NULL) {
+      t = node->right;
+    }else if (parent->data > v) {
+      parent->left = node->right;
+    } else {
+      parent->right = node->right;
+    }
+  } else if (node->left != NULL && node->right == NULL) {
+    if (parent == NULL) {
+      t = node->left;
+    } else if (parent->data > v) {
+      parent->left = node->left;
+    } else {
+      parent->right = node->left;
+    }
+  } else {
+    bst_t *right_min = find_min_p(node->right);
+    bst_t *parent_right_min = NULL;
+    parent_right_min = find_parent(t,right_min->data,parent_right_min);
+    if (parent_right_min == node) {
+      parent_right_min->right = right_min->right;
+    } else {
+      parent_right_min->left = right_min->right;
+    }
+    right_min->left = node->left;
+    right_min->right = node->right;
+    if (parent == NULL) {
+      t = right_min;
+    } else if (parent->data > right_min->data) {
+      parent->left = right_min;
+    } else {
+      parent->right = right_min;
     }
   }
+  free(node);
+  return t;
 } 
 
 int find(bst_t *t, int v) {
