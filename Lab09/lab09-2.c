@@ -65,7 +65,7 @@ avl_t* insert(avl_t* t, int data)
     {
         t->right = insert(t->right, data);
     }
-    t->height = height(t);
+    t->height = 1 + max_value(height(t->left), height(t->right));
 
     bf = balance_factor(t);
 
@@ -126,13 +126,13 @@ avl_t* delete(avl_t* t, int data)
         t->data = node->data;
         t->right = delete(t->right, node->data);
     }
-    t->height = height(t);
+    t->height = 1 + max_value(height(t->left), height(t->right));
 
     bf = balance_factor(t);
 
     if (bf > 1)
     {
-        if (data < t->left->data)
+        if (balance_factor(t->left) >= 0)
         {
             return right_rotation(t);
         }
@@ -141,7 +141,7 @@ avl_t* delete(avl_t* t, int data)
     }
     else if (bf < -1)
     {
-        if (data > t->right->data)
+        if (balance_factor(t->right) <= 0)
         {
             return left_rotation(t);
         }
