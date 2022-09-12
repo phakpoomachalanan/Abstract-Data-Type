@@ -21,7 +21,7 @@ avl_t* right_rotation(avl_t* t);
 avl_t* balance(avl_t* t, int data);
 avl_t* search_left(avl_t* t);
 int height(avl_t* t);
-int fmax(int left, int right);
+int max_value(int left, int right);
 int balance_factor(avl_t* t);
 
 int main(void) {
@@ -65,6 +65,7 @@ avl_t* insert(avl_t* t, int data)
     {
         t->right = insert(t->right, data);
     }
+    t->height = height(t);
 
     bf = balance_factor(t);
 
@@ -125,6 +126,7 @@ avl_t* delete(avl_t* t, int data)
         t->data = node->data;
         t->right = delete(t->right, node->data);
     }
+    t->height = height(t);
 
     bf = balance_factor(t);
 
@@ -197,10 +199,10 @@ avl_t* search_left(avl_t* t)
 
 int height(avl_t* t)
 {
-    return t == NULL ? 0 : 1 + fmax(height(t->left), height(t->right));
+    return t == NULL ? -1 : 1 + max_value(height(t->left), height(t->right));
 }
 
-int fmax(int left, int right)
+int max_value(int left, int right)
 {
     return left > right ? left : right;
 }
