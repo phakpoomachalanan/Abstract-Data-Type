@@ -11,8 +11,11 @@ void insert(heap_t* h, int data);
 void delete_max(heap_t* h);
 int find_max(heap_t* h);
 void update_key(heap_t* h, int old_key, int new_key);
-int find_index(heap_t* h, int data, int now);
 void bfs(heap_t* h);
+
+void percolate_up(heap_t* h, int data, int now);
+void percolate_down(heap_t* h, int now);
+int find_index(heap_t* h, int data, int now);
 
 int main (void) {
     heap_t *max_heap = NULL;
@@ -50,6 +53,7 @@ int main (void) {
 heap_t* init_heap(int m)
 {
     heap_t* h = (heap_t*)malloc(sizeof(heap_t));
+
     h->data = (int*)malloc(sizeof(int) * m);
     h->last_index = 1;
 
@@ -58,26 +62,68 @@ heap_t* init_heap(int m)
 
 void insert(heap_t* h, int data)
 {
-    int now = h->last_index;
-    int temp;
     h->data[h->last_index++] = data;
-    
+    percolate_up(h, data, h->last_index-1);
+}
+
+void delete_max(heap_t* h)
+{
+    h->data[1] = h->data[--h->last_index];
+    percolate_down(h, 1);
+}
+
+int find_max(heap_t* h)
+{
+    return h->last_index <= 1 ? -1 : h->data[1];
+}
+
+void update_key(heap_t* h, int old_key, int new_key)
+{
+    int index = find_index(h, old_key, 1);
+
+    h->data[index] = new_key;
+
+    if (new_key > h->data[index/2])
+    {
+        percolate_up(h, new_key, index);
+    }
+    else if (index * 2 < h->last_index-1)
+    {
+        percolate_down(h, index);
+    }
+}
+
+void bfs(heap_t* h)
+{
+    int now = 1;
+
+    while (now < h->last_index)
+    {
+        printf("%d ", h->data[now++]);
+    }
+    printf("\n");
+}
+
+void percolate_up(heap_t* h, int data, int now)
+{
+    int temp;    
+
     while (now/2 > 0 && data > h->data[now/2])
     {
         temp = h->data[now/2];
         h->data[now/2] = h->data[now];
         h->data[now] = temp;
+
         now /= 2;
     }
 }
 
-void delete_max(heap_t* h)
+void percolate_down(heap_t* h, int now)
 {
-    int now = 1;
     int temp;
-    h->data[1] = h->data[h->last_index--];
+    int index;
 
-    while (now*2 < h->last_index)
+    while (now*2+1 < h->last_index)
     {
         if (h->data[now] > h->data[now*2] && h->data[now] > h->data[now*2+1])
         {
@@ -85,42 +131,22 @@ void delete_max(heap_t* h)
         }
         if (h->data[now*2+1] > h->data[now*2])
         {
-            temp = h->data[now*2+1];
-            h->data[now*2+1] = h->data[now];
-            h->data[now] = temp; 
+            index = now*2+1;
         }
         else
         {
-            temp = h->data[now*2];
-            h->data[now*2] = h->data[now];
-            h->data[now] = temp;
+            index = now*2;
         }
-        bfs(h);
+
+        temp = h->data[index];
+        h->data[index] = h->data[now];
+        h->data[now] = temp;
+
         now *= 2;
     }
-}
-
-int find_max(heap_t* h)
-{
-    return h->data[1];
-}
-
-void update_key(heap_t* h, int old_key, int new_key)
-{
-    h->data[find_index(h, old_key, 1)] = new_key;
 }
 
 int find_index(heap_t* h, int data, int now)
 {
     return h->data[now] == data ? now : find_index(h, data, now+1);
-}
-
-void bfs(heap_t* h)
-{
-    int now = 1;
-    while (now < h->last_index)
-    {
-        printf("%d ", h->data[now++]);
-    }
-    printf("\n");
 }
