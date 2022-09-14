@@ -49,7 +49,8 @@ int main (void) {
 
 heap_t* init_heap(int m)
 {
-    heap_t* h = (heap_t*)malloc(sizeof(heap_t) * m);
+    heap_t* h = (heap_t*)malloc(sizeof(heap_t));
+    h->data = (int*)malloc(sizeof(int) * m);
     h->last_index = 1;
 
     return h;
@@ -57,14 +58,46 @@ heap_t* init_heap(int m)
 
 void insert(heap_t* h, int data)
 {
+    int now = h->last_index;
+    int temp;
     h->data[h->last_index++] = data;
-    // swap
+    
+    while (now/2 > 0 && data > h->data[now/2])
+    {
+        temp = h->data[now/2];
+        h->data[now/2] = h->data[now];
+        h->data[now] = temp;
+        now /= 2;
+    }
 }
 
 void delete_max(heap_t* h)
 {
+    int now = 1;
+    int temp;
     h->data[1] = h->data[h->last_index--];
-    // swap
+
+    while (now*2 < h->last_index)
+    {
+        if (h->data[now] > h->data[now*2] && h->data[now] > h->data[now*2+1])
+        {
+            break;
+        }
+        if (h->data[now*2+1] > h->data[now*2])
+        {
+            temp = h->data[now*2+1];
+            h->data[now*2+1] = h->data[now];
+            h->data[now] = temp; 
+        }
+        else
+        {
+            temp = h->data[now*2];
+            h->data[now*2] = h->data[now];
+            h->data[now] = temp;
+        }
+        bfs(h);
+        now *= 2;
+    }
 }
 
 int find_max(heap_t* h)
