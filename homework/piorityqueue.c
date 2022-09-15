@@ -17,7 +17,7 @@ heap_t *init_heap(int n) {
 void bfs(heap_t *max_heap) {
     for (int i = 1; i <= max_heap->last_index; i++)
     {
-        printf("%d ,%d\n",max_heap->data[i],i);
+        printf("%d ",max_heap->data[i]);
     }
     printf("\n");
 }
@@ -42,27 +42,23 @@ void delete_max(heap_t *max_heap) {
     max_heap->data[1] = max_heap->data[max_heap->last_index--];
     int tmp;
     
-    while (2*i+1 < max_heap->last_index && max_heap->data[i] < max_heap->data[2*i] || max_heap->data[i] < max_heap->data[2*i+1]) //compare with children
+    while (2*i+1 < max_heap->last_index && (max_heap->data[i] < max_heap->data[2*i] || max_heap->data[i] < max_heap->data[2*i+1])) //compare with children
     {
         //bfs(max_heap);
-        if (i<=1)
-        {
-            break;
-        }
         
-        if (max_heap->data[2*i] > max_heap->data[i]) // left child larger than parent
+        if (max_heap->data[2*i+1] > max_heap->data[2*i])
+        {
+            tmp = max_heap->data[i];
+            max_heap->data[i] = max_heap->data[2*i+1];
+            max_heap->data[2*i+1] = tmp;
+            i = i*2;
+        }
+        else
         {
             tmp = max_heap->data[i];
             max_heap->data[i] = max_heap->data[2*i];
             max_heap->data[2*i] = tmp;
             i = i*2;
-        }
-        else if (max_heap->data[2*i+1] > max_heap->data[i]) // right child larger than parent
-        {
-            tmp = max_heap->data[i];
-            max_heap->data[i] = max_heap->data[2*i+1];
-            max_heap->data[2*i+1] = tmp;
-            i = i*2+1;
         }
         
     }
@@ -101,22 +97,25 @@ void update_key(heap_t *max_heap, int old_key, int new_key) {
     }
     else if (i*2 < max_heap->last_index-1) //compare with left child
     {
-         while (2*i+1 < max_heap->last_index && max_heap->data[i] < max_heap->data[2*i] || max_heap->data[i] < max_heap->data[2*i+1]) //precolate
+        while (2*i+1 < max_heap->last_index && (max_heap->data[i] < max_heap->data[2*i] || max_heap->data[i] < max_heap->data[2*i+1])) //compare with children
         {
-            if (max_heap->data[2*i] > max_heap->data[i]) // left child larger than parent
+            //bfs(max_heap);
+            
+            if (max_heap->data[2*i+1] > max_heap->data[2*i])
+            {
+                tmp = max_heap->data[i];
+                max_heap->data[i] = max_heap->data[2*i+1];
+                max_heap->data[2*i+1] = tmp;
+                i = i*2;
+            }
+            else
             {
                 tmp = max_heap->data[i];
                 max_heap->data[i] = max_heap->data[2*i];
                 max_heap->data[2*i] = tmp;
                 i = i*2;
             }
-            else if (max_heap->data[2*i+1] > max_heap->data[i]) // right child larger than parent
-            {
-                tmp = max_heap->data[i];
-                max_heap->data[i] = max_heap->data[2*i+1];
-                max_heap->data[2*i+1] = tmp;
-                i = i*2+1;
-            }            
+            
         }
     }   
 }
