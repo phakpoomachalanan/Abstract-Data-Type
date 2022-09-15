@@ -39,30 +39,28 @@ void insert(heap_t *max_heap,int value) {
 
 void delete_max(heap_t *max_heap) {
     int i = 1;
-    max_heap->data[1] = max_heap->data[max_heap->last_index--];
+    max_heap->data[1] = max_heap->data[max_heap->last_index];
     int tmp;
     
     while (2*i+1 < max_heap->last_index && (max_heap->data[i] < max_heap->data[2*i] || max_heap->data[i] < max_heap->data[2*i+1])) //compare with children
     {
-        //bfs(max_heap);
         
-        if (max_heap->data[2*i+1] > max_heap->data[2*i])
-        {
-            tmp = max_heap->data[i];
-            max_heap->data[i] = max_heap->data[2*i+1];
-            max_heap->data[2*i+1] = tmp;
-            i = i*2;
-        }
-        else
+        if (max_heap->data[2*i] > max_heap->data[i]) 
         {
             tmp = max_heap->data[i];
             max_heap->data[i] = max_heap->data[2*i];
             max_heap->data[2*i] = tmp;
             i = i*2;
         }
-        
+        else if (max_heap->data[2*i+1] > max_heap->data[i])
+        {
+            tmp = max_heap->data[i];
+            max_heap->data[i] = max_heap->data[2*i+1];
+            max_heap->data[2*i+1] = tmp;
+            i = i*2+1;
+        }
     }
-    //--max_heap->last_index;
+    max_heap->last_index--;
 }
 int find_pos(heap_t *max_heap, int value) {
     int i = 1;
@@ -99,23 +97,21 @@ void update_key(heap_t *max_heap, int old_key, int new_key) {
     {
         while (2*i+1 < max_heap->last_index && (max_heap->data[i] < max_heap->data[2*i] || max_heap->data[i] < max_heap->data[2*i+1])) //compare with children
         {
-            //bfs(max_heap);
             
-            if (max_heap->data[2*i+1] > max_heap->data[2*i])
-            {
-                tmp = max_heap->data[i];
-                max_heap->data[i] = max_heap->data[2*i+1];
-                max_heap->data[2*i+1] = tmp;
-                i = i*2;
-            }
-            else
+            if (max_heap->data[2*i] > max_heap->data[i]) 
             {
                 tmp = max_heap->data[i];
                 max_heap->data[i] = max_heap->data[2*i];
                 max_heap->data[2*i] = tmp;
                 i = i*2;
             }
-            
+            else if (max_heap->data[2*i+1] > max_heap->data[i])
+            {
+                tmp = max_heap->data[i];
+                max_heap->data[i] = max_heap->data[2*i+1];
+                max_heap->data[2*i+1] = tmp;
+                i = i*2+1;
+            }
         }
     }   
 }
