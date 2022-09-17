@@ -17,7 +17,7 @@ int find_max(heap_t *max_heap) {
   if (max_heap->data[1] == 0) {
     return -1;
   } else {
-    return max_heap->data[0];
+    return max_heap->data[1];
   }
 }
 void find_less(heap_t *max_heap, int data) {
