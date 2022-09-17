@@ -38,16 +38,15 @@ int find_max(heap_t *max_heap) {
 }
 void find_less(heap_t *max_heap, word_t *word, int data) {
   int dataindex = max_heap->last_index;
-  while (max_heap->data[dataindex].frequency > max_heap->data[dataindex/2].frequency && dataindex/2 != 0) {
+  while (max_heap->data[max_heap->last_index].frequency > max_heap->data[dataindex/2].frequency || dataindex/2 != 0) {
     max_heap->data[dataindex].frequency = max_heap->data[dataindex/2].frequency;
     max_heap->data[dataindex/2].frequency = data;
-    if (max_heap->data[dataindex/2].frequency > max_heap->data[dataindex/4].frequency && dataindex/4 != 0) {
+    if (data <= max_heap->data[dataindex/4].frequency || dataindex/4 == 0) {
       break;
     }
     dataindex/=2;
     }
   max_heap->data[dataindex].word_data = word;
-  printf("{%d}",max_heap->data[dataindex].frequency);
   }
 
 void insert(heap_t *max_heap,word_t *word, int data) {
@@ -104,7 +103,6 @@ void bfs(heap_t *max_heap) {
   int i = 1;
   while (i <= max_heap->last_index) {
     printf("[%d : %s]",max_heap->data[i].frequency, max_heap->data[i].word_data);
-    printf("wtf");
     i++;
   }
   printf("\n");
