@@ -55,7 +55,7 @@ void find_more(heap_t *max_heap, int data) {
     }
   }
 }
-
+int bfs(heap_t *max_heap);
 void delete_max(heap_t *max_heap) {
   max_heap->data[1] = max_heap->data[max_heap->last_index];
   max_heap->data[max_heap->last_index] = 0;
@@ -79,7 +79,7 @@ void update_key(heap_t *max_heap, int old_key, int new_key) {
     find_more(max_heap, new_key);
   }
 }
-void bfs(heap_t *max_heap) {
+int bfs(heap_t *max_heap) {
   int i = 1;
   while (i <= max_heap->last_index) {
     printf("%d ",max_heap->data[i]);
