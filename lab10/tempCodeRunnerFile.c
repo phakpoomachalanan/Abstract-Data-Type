@@ -10,28 +10,25 @@ heap_t *init_heap(int m) {
   heap_t *h = (heap_t *)malloc(sizeof(heap_t));
   h->data = (int*)malloc(sizeof(int)*(m+1));
   h->last_index = 0;
+  h->data[0] = -999;
   return h;
 }
-
 int find_max(heap_t *max_heap) {
   if (max_heap->data[1] == 0) {
     return -1;
   } else {
-    return max_heap->data[1];
+    return max_heap->data[0];
   }
 }
 void find_less(heap_t *max_heap, int data) {
   int dataindex = max_heap->last_index;
-  while (1) {
-    if (max_heap->data[dataindex] > max_heap->data[dataindex/2]) {
-      max_heap->data[dataindex] = max_heap->data[dataindex/2];
-      max_heap->data[dataindex/2] = data;
-      dataindex/=2;
-    } else {
-      break;
+  while (max_heap->data[dataindex] > max_heap->data[dataindex/2] && dataindex/2 != 0) {
+    max_heap->data[dataindex] = max_heap->data[dataindex/2];
+    max_heap->data[dataindex/2] = data;
+    dataindex/=2;
     }
   }
-}
+
 void insert(heap_t *max_heap, int data) {
   max_heap->last_index += 1;
   max_heap->data[max_heap->last_index] = data;
@@ -55,8 +52,11 @@ void find_more(heap_t *max_heap, int data) {
     }
   }
 }
-int bfs(heap_t *max_heap);
-void delete_max(heap_t *max_heap) {
+
+int delete_max(heap_t *max_heap) {
+  if (max_heap->data[1] == 0) {
+    return 0;
+  }
   max_heap->data[1] = max_heap->data[max_heap->last_index];
   max_heap->data[max_heap->last_index] = 0;
   max_heap->last_index--;
@@ -70,7 +70,7 @@ void update_key(heap_t *max_heap, int old_key, int new_key) {
   }
   max_heap->data[i] = new_key;
   if (max_heap->data[i/2] < max_heap->data[i]) {
-    while (new_key>max_heap->data[i/2]) {
+    while (new_key>max_heap->data[i/2] && i/2 != 0) {
       max_heap->data[i] = max_heap->data[i/2];
       max_heap->data[i/2] = new_key;
       i/=2;
@@ -79,7 +79,7 @@ void update_key(heap_t *max_heap, int old_key, int new_key) {
     find_more(max_heap, new_key);
   }
 }
-int bfs(heap_t *max_heap) {
+void bfs(heap_t *max_heap) {
   int i = 1;
   while (i <= max_heap->last_index) {
     printf("%d ",max_heap->data[i]);
