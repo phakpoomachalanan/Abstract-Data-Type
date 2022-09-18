@@ -37,8 +37,6 @@ void insert(heap_t *max_heap, int data) {
 void find_more(heap_t *max_heap, int data) {
   int i = 1;
   while ((max_heap->data[i*2] != 0 || max_heap->data[(i*2)+1] != 0) && i*2 <= max_heap->last_index) {
-    //Sleep(300);
-    //printf("[%d]", i);
     if (max_heap->data[i*2]>max_heap->data[i]) {
       max_heap->data[i] = max_heap->data[i*2];
       max_heap->data[i*2] = data;

@@ -1,125 +1,126 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct word {
-  char word[15];
-}word_t;
-
-typedef struct data {
-  int frequency;
-  word_t *word_data;
-}data_t;
-
-typedef struct heap {
-  data_t *data;
-  int last_index;   
-} heap_t;
 
 typedef struct tree {
-  int frequency;
+  int data;
   char *word;
   struct tree *right;
   struct tree *left;
 } binary_t;
 
+typedef struct heap {
+  binary_t *tree;
+  int last_index;   
+} heap_t;
+
+
+
 heap_t *init_heap(int m) {
   heap_t *h = (heap_t *)malloc(sizeof(heap_t));
-  h->data = (data_t*)malloc(sizeof(data_t)*(m+1));
+  h->tree = (binary_t *)malloc(sizeof(binary_t)*(m+1));
+  for (int i = 1;i<=m;i++) {
+    h->tree[i].word = (char *)malloc(sizeof(char)*15);
+    h->tree[i].right = NULL;
+    h->tree[i].left = NULL;
+  }
   h->last_index = 0;
-  h->data[0].frequency = -999;
+  h->tree[0].data = -999;
+  h->tree[0].word = "\0";
   return h;
 }
-int find_max(heap_t *max_heap) {
-  if (max_heap->data[1].frequency == 0) {
-    return -1;
-  } else {
-    return max_heap->data[1].frequency;
-  }
-}
-void find_less(heap_t *max_heap, word_t *word, int data) {
+void bfs(heap_t *max_heap);
+void find_less(heap_t *max_heap, char *word, int data) {
   int dataindex = max_heap->last_index;
-  while (max_heap->data[max_heap->last_index].frequency > max_heap->data[dataindex/2].frequency || dataindex/2 != 0) {
-    max_heap->data[dataindex].frequency = max_heap->data[dataindex/2].frequency;
-    max_heap->data[dataindex/2].frequency = data;
-    if (data <= max_heap->data[dataindex/4].frequency || dataindex/4 == 0) {
-      break;
-    }
+  while (max_heap->tree[dataindex].data < max_heap->tree[dataindex/2].data && dataindex/2 != 0) {
+    bfs(max_heap);
+    max_heap->tree[dataindex].data = max_heap->tree[dataindex/2].data;
+    max_heap->tree[dataindex].word = max_heap->tree[dataindex/2].word;
+    max_heap->tree[dataindex/2].data = data;
+    max_heap->tree[dataindex/2].word = word;
     dataindex/=2;
-    }
-  max_heap->data[dataindex].word_data = word;
   }
-
-void insert(heap_t *max_heap,word_t *word, int data) {
-  max_heap->last_index += 1;
-  max_heap->data[max_heap->last_index].frequency = data;
-  find_less(max_heap, word, data);
 }
-void find_more(heap_t *max_heap, int data) {
+void delete_min(heap_t *max_heap, binary_t data) {
+  max_heap->tree[1].word = "\0";
+  max_heap->tree[1].data = 0;
+  max_heap->tree[1].right = NULL;
+  max_heap->tree[1].left = NULL;
+  for (int i = 1;i<max_heap->last_index;i++) {
+    max_heap->tree[i] = max_heap->tree[i+1];
+  }
+  max_heap->tree[max_heap->last_index].word = "\0";
+  max_heap->tree[max_heap->last_index].data = 0;
+  max_heap->tree[max_heap->last_index].right = NULL;
+  max_heap->tree[max_heap->last_index].left = NULL;
+  max_heap->last_index--;
+  data = max_heap->tree[1];
   int i = 1;
-  while ((max_heap->data[i*2].frequency != 0 || max_heap->data[(i*2)+1].frequency != 0) && i*2 <= max_heap->last_index) {
-    //Sleep(300);
-    //printf("[%d]", i);
-    if (max_heap->data[i*2].frequency>max_heap->data[i].frequency) {
-      max_heap->data[i] = max_heap->data[i*2];
-      max_heap->data[i*2].frequency = data;
+  
+  while ((max_heap->tree[i*2].data != 0 || max_heap->tree[(i*2)+1].data != 0) && i*2 <= max_heap->last_index) {
+    if (max_heap->tree[i*2].data<=max_heap->tree[i].data) {
+      max_heap->tree[i] = max_heap->tree[i*2];
+      max_heap->tree[i*2] = data;
       i = i*2;
-    } else if (max_heap->data[(i*2)+1].frequency>max_heap->data[i].frequency) {
-      max_heap->data[i].frequency = max_heap->data[(i*2)+1].frequency;
-      max_heap->data[(i*2)+1].frequency = data;
+    } else if (max_heap->tree[(i*2)+1].data<=max_heap->tree[i].data) {
+      max_heap->tree[i] = max_heap->tree[(i*2)+1];
+      max_heap->tree[(i*2)+1] = data;
       i = (i*2)+1;
     } else {
       i++;
     }
+  } 
+}
+void insert(heap_t *max_heap,char *word, int data) {
+  max_heap->last_index += 1;
+  max_heap->tree[max_heap->last_index].data = data;
+  find_less(max_heap, word, data);
+}
+void add_tree(heap_t *max_heap) {
+  max_heap->last_index+=1;
+  max_heap->tree[max_heap->last_index].left = &max_heap->tree[1];
+  max_heap->tree[max_heap->last_index].right = &max_heap->tree[2];
+  max_heap->tree[max_heap->last_index].data = ((max_heap->tree[max_heap->last_index].left->data) + (max_heap->tree[max_heap->last_index].right->data));
+  max_heap->tree[max_heap->last_index].word = "\0";
+  bfs(max_heap);
+  delete_min(max_heap,max_heap->tree[max_heap->last_index]);
+  bfs(max_heap);
+  delete_min(max_heap,max_heap->tree[max_heap->last_index]);
+  bfs(max_heap);
+  int dataindex = max_heap->last_index;
+  binary_t temp = max_heap->tree[dataindex];
+  
+  while (max_heap->tree[dataindex].data <= max_heap->tree[dataindex/2].data && dataindex/2 != 0) {
+    max_heap->tree[dataindex] = max_heap->tree[dataindex/2];
+    max_heap->tree[dataindex/2] = temp;
+    dataindex/=2;
   }
 }
 
-int delete_max(heap_t *max_heap) {
-  if (max_heap->data[1].frequency == 0) {
-    return 0;
-  }
-  max_heap->data[1].frequency = max_heap->data[max_heap->last_index].frequency;
-  max_heap->data[max_heap->last_index].frequency = 0;
-  max_heap->last_index--;
-  //bfs(max_heap);
-  find_more(max_heap, max_heap->data[1].frequency);
-}
-void update_key(heap_t *max_heap, int old_key, int new_key) {
-  int i = 1;
-  while (max_heap->data[i].frequency != old_key) {
-    i++;
-  }
-  max_heap->data[i].frequency = new_key;
-  if (max_heap->data[i/2].frequency < max_heap->data[i].frequency) {
-    while (new_key>max_heap->data[i/2].frequency && i/2 != 0) {
-      max_heap->data[i].frequency = max_heap->data[i/2].frequency;
-      max_heap->data[i/2].frequency = new_key;
-      i/=2;
-    }
-  } else if (max_heap->data[i*2].frequency > max_heap->data[i].frequency || max_heap->data[(i*2)+1].frequency > max_heap->data[i].frequency) {
-    find_more(max_heap, new_key);
-  }
-}
 void bfs(heap_t *max_heap) {
   int i = 1;
   while (i <= max_heap->last_index) {
-    printf("[%d : %s]",max_heap->data[i].frequency, max_heap->data[i].word_data);
+    printf("[%d : %s]",max_heap->tree[i].data, max_heap->tree[i].word);
     i++;
   }
   printf("\n");
 }
 int main(void) {
   heap_t *max_heap = NULL;
-  int m, n, i;
+  int  n, i;
   int frequency;
   int old_key, new_key;
   
   scanf("%d",&n);
-  max_heap = init_heap(m);
+  max_heap = init_heap(n);
   for (i=0; i<n; i++) {
-    word_t *word = (word_t*)malloc(sizeof(word_t));
-    scanf("%s %d", word, &frequency);
-    printf("%s",*word);
-    insert(max_heap,word,frequency);
+    scanf("%s %d", max_heap->tree[max_heap->last_index+1].word, &frequency);
+    insert(max_heap,max_heap->tree[max_heap->last_index+1].word,frequency);
     bfs(max_heap);
   }
+  while (max_heap->tree[2].word != "\0" && max_heap->tree[2].data != 0) {
+    add_tree(max_heap);
+    bfs(max_heap);
+  }
+  printf("end");
 }
