@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <Windows.h>
 
 typedef struct tree {
   int data;
@@ -33,7 +33,6 @@ void bfs(heap_t *max_heap);
 void find_less(heap_t *max_heap, char *word, int data) {
   int dataindex = max_heap->last_index;
   while (max_heap->tree[dataindex].data < max_heap->tree[dataindex/2].data && dataindex/2 != 0) {
-    bfs(max_heap);
     max_heap->tree[dataindex].data = max_heap->tree[dataindex/2].data;
     max_heap->tree[dataindex].word = max_heap->tree[dataindex/2].word;
     max_heap->tree[dataindex/2].data = data;
@@ -95,46 +94,63 @@ void insert(heap_t *max_heap,char *word, int data) {
   max_heap->tree[max_heap->last_index].data = data;
   find_less(max_heap, word, data);
 }
-void add_tree(heap_t *max_heap,binary_t left,binary_t right) {
+void add_tree(heap_t *max_heap,binary_t *left,binary_t *right) {
   max_heap->last_index++;
-  max_heap->tree[max_heap->last_index].left = &left;
-  max_heap->tree[max_heap->last_index].right = &right;
+  max_heap->tree[max_heap->last_index].left = left;
+  max_heap->tree[max_heap->last_index].right = right;
   max_heap->tree[max_heap->last_index].word = "\0";
   max_heap->tree[max_heap->last_index].data = max_heap->tree[max_heap->last_index].left->data + max_heap->tree[max_heap->last_index].right->data;
 }
-
+int dfs(binary_t *t) {
+  Sleep(50);
+  if (t == NULL) {
+    return 0;
+  }
+  printf("{%d:%s}",t->data,t->word);
+  dfs(t->left);
+  dfs(t->right);
+  //printf("[%s]",t->word);
+} 
 void bfs(heap_t *max_heap) {
   int i = 1;
+  printf("----------------\n");
   while (i <= max_heap->last_index) {
     printf("[%d : %s]",max_heap->tree[i].data, max_heap->tree[i].word);
     i++;
+  }printf("\n");
+  i = 1;
+  while (i <= max_heap->last_index) {
+    dfs(&max_heap->tree[i]);
+    i++;
   }
   printf("\n");
+  printf("----------------\n");
 }
 int main(void) {
   heap_t *max_heap = NULL;
   int  n, i;
   int frequency;
   int old_key, new_key;
-  binary_t right;
-  binary_t left;
   scanf("%d",&n);
   max_heap = init_heap(n);
   for (i=0; i<n; i++) {
     scanf("%s %d", max_heap->tree[max_heap->last_index+1].word, &frequency);
     insert(max_heap,max_heap->tree[max_heap->last_index+1].word,frequency);
-    bfs(max_heap);
+    
   }
   while (max_heap->tree[2].data != 0) {
-      left = delete_min1(max_heap);
-      printf("de1");
-      bfs(max_heap);
-      right = delete_min1(max_heap);
-      printf("de2");
-      bfs(max_heap);
-      add_tree(max_heap, left, right);
-      printf("add");
+    binary_t *right = (binary_t *)malloc(sizeof(binary_t));
+    binary_t *left = (binary_t *)malloc(sizeof(binary_t));
+    *left = delete_min1(max_heap);
+    printf("de1");
+    bfs(max_heap);
+    *right = delete_min1(max_heap);
+    printf("de2");
+    bfs(max_heap);
+    add_tree(max_heap, left, right);
+    printf("add");
     bfs(max_heap);
   }
-  printf("end");
+  //dfs(&max_heap->tree[1]);
+  
 }
