@@ -102,7 +102,7 @@ void add_tree(heap_t *max_heap,binary_t *left,binary_t *right) {
   max_heap->tree[max_heap->last_index].data = max_heap->tree[max_heap->last_index].left->data + max_heap->tree[max_heap->last_index].right->data;
 }
 int dfs(binary_t *t) {
-  Sleep(50);
+  //Sleep(0);
   if (t == NULL) {
     return 0;
   }
@@ -126,6 +126,47 @@ void bfs(heap_t *max_heap) {
   printf("\n");
   printf("----------------\n");
 }
+int count;
+char bi[15];
+int sy = 0;
+binary_t *temp_recu;
+binary_t *recur;
+binary_t *recu(binary_t*t){
+  if (sy == 0) {
+    bi[count] = '0';
+  }else{
+    bi[count] = '1';
+  }
+  count++;
+  if (t == NULL) {
+    
+    return NULL;
+  }
+  recur = t;
+  sy = 0;
+  recu(t->left);
+  sy = 1;
+  recu(t->right);
+}
+int dfs_end(binary_t *t,int n) {
+  
+  for (int i = 0;i<=n;i++) {
+    count = 0;
+    printf("%s: ",recu(t)->word);
+    int j = 0;
+    while (bi[j] != '\0') {
+      printf("%c",bi[j]);
+      j++;
+    }
+    printf("\n");
+    if (sy == 1) {
+      temp_recu->right == NULL;
+    } else {
+      temp_recu->left == NULL;
+    }
+  }
+  
+} 
 int main(void) {
   heap_t *max_heap = NULL;
   int  n, i;
@@ -151,6 +192,6 @@ int main(void) {
     printf("add");
     bfs(max_heap);
   }
-  //dfs(&max_heap->tree[1]);
+  dfs_end(&max_heap->tree[1],n);
   
 }
