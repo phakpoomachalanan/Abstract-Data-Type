@@ -4,7 +4,7 @@
 typedef struct tree {
   int data;
   char *word;
-  int order;
+  //int order;
   struct tree *right;
   struct tree *left;
 } binary_t;
@@ -31,16 +31,21 @@ heap_t *init_heap(int m) {
 }
 int order = 1;
 void bfs(heap_t *max_heap);
-void find_less(heap_t *max_heap, char *word, int data ) {
+void find_less(heap_t *max_heap, char *word, int data,binary_t *left,binary_t *right ) {
   int dataindex = max_heap->last_index;
   while (max_heap->tree[dataindex].data < max_heap->tree[dataindex/2].data && dataindex/2 != 0) {
     max_heap->tree[dataindex].data = max_heap->tree[dataindex/2].data;
     max_heap->tree[dataindex].word = max_heap->tree[dataindex/2].word;
+    max_heap->tree[dataindex].right = max_heap->tree[dataindex/2].right;
+    max_heap->tree[dataindex].left = max_heap->tree[dataindex/2].left;
+    //max_heap->tree[dataindex].order = max_heap->tree[dataindex/2].order;
     max_heap->tree[dataindex/2].data = data;
     max_heap->tree[dataindex/2].word = word;
+    max_heap->tree[dataindex/2].right = right;
+    max_heap->tree[dataindex/2].left = left;
+    //max_heap->tree[dataindex/2].order = order;
     dataindex/=2;
   }
-  order++;
 }
 binary_t delete_min1(heap_t *max_heap) {
   binary_t temp = max_heap->tree[1];
@@ -97,11 +102,13 @@ binary_t delete_min1(heap_t *max_heap) {
 void insert(heap_t *max_heap,char *word, int data) {
   max_heap->last_index += 1;
   max_heap->tree[max_heap->last_index].data = data;
-  find_less(max_heap, word, data);
+  //max_heap->tree[max_heap->last_index].order = order;
+  find_less(max_heap, word, data, NULL,NULL);
+  order++;
 }
 void add_tree(heap_t *max_heap,binary_t *left,binary_t *right) {
   max_heap->last_index++;
-  //if (right->order > left->order || right->data != left->data) {
+  //if (right->order > left->order || right->data != left->data || (right->order == 0 || left->order == 0)) {
     max_heap->tree[max_heap->last_index].left = left;
     max_heap->tree[max_heap->last_index].right = right;
   //} else {
@@ -110,13 +117,15 @@ void add_tree(heap_t *max_heap,binary_t *left,binary_t *right) {
   //}
   max_heap->tree[max_heap->last_index].word = "\0";
   max_heap->tree[max_heap->last_index].data = max_heap->tree[max_heap->last_index].left->data + max_heap->tree[max_heap->last_index].right->data;
+  //max_heap->tree[max_heap->last_index].order = max_heap->tree[max_heap->last_index].right->order;
+  find_less(max_heap, max_heap->tree[max_heap->last_index].word,max_heap->tree[max_heap->last_index].data,max_heap->tree[max_heap->last_index].left,max_heap->tree[max_heap->last_index].right);
 }
 int dfs(binary_t *t) {
   //Sleep(0);
   if (t == NULL) {
     return 0;
   }
-  printf("{%d:%s:%d}",t->data,t->word,t->order);
+  printf("{%d:%s}",t->data,t->word);
   dfs(t->left);
   dfs(t->right);
   //printf("[%s]",t->word);
