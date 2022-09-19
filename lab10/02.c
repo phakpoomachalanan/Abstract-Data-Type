@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <Windows.h>
 
 typedef struct tree {
   int data;
   char *word;
+  int order;
   struct tree *right;
   struct tree *left;
 } binary_t;
@@ -29,8 +29,9 @@ heap_t *init_heap(int m) {
   h->tree[0].word = "\0";
   return h;
 }
+int order = 1;
 void bfs(heap_t *max_heap);
-void find_less(heap_t *max_heap, char *word, int data) {
+void find_less(heap_t *max_heap, char *word, int data ) {
   int dataindex = max_heap->last_index;
   while (max_heap->tree[dataindex].data < max_heap->tree[dataindex/2].data && dataindex/2 != 0) {
     max_heap->tree[dataindex].data = max_heap->tree[dataindex/2].data;
@@ -39,6 +40,7 @@ void find_less(heap_t *max_heap, char *word, int data) {
     max_heap->tree[dataindex/2].word = word;
     dataindex/=2;
   }
+  order++;
 }
 binary_t delete_min1(heap_t *max_heap) {
   binary_t temp = max_heap->tree[1];
@@ -86,7 +88,10 @@ binary_t delete_min1(heap_t *max_heap) {
       i++;
     }
     }
+  //printf("subD");
+  //bfs(max_heap);
   } 
+  
   return temp;
 }
 void insert(heap_t *max_heap,char *word, int data) {
@@ -96,8 +101,13 @@ void insert(heap_t *max_heap,char *word, int data) {
 }
 void add_tree(heap_t *max_heap,binary_t *left,binary_t *right) {
   max_heap->last_index++;
-  max_heap->tree[max_heap->last_index].left = left;
-  max_heap->tree[max_heap->last_index].right = right;
+  //if (right->order > left->order || right->data != left->data) {
+    max_heap->tree[max_heap->last_index].left = left;
+    max_heap->tree[max_heap->last_index].right = right;
+  //} else {
+    //max_heap->tree[max_heap->last_index].right = left;
+    //max_heap->tree[max_heap->last_index].left = right;
+  //}
   max_heap->tree[max_heap->last_index].word = "\0";
   max_heap->tree[max_heap->last_index].data = max_heap->tree[max_heap->last_index].left->data + max_heap->tree[max_heap->last_index].right->data;
 }
@@ -106,7 +116,7 @@ int dfs(binary_t *t) {
   if (t == NULL) {
     return 0;
   }
-  printf("{%d:%s}",t->data,t->word);
+  printf("{%d:%s:%d}",t->data,t->word,t->order);
   dfs(t->left);
   dfs(t->right);
   //printf("[%s]",t->word);
@@ -131,41 +141,28 @@ char bi[15];
 int sy = 0;
 binary_t *temp_recu;
 binary_t *recur;
-binary_t *recu(binary_t*t){
-  if (sy == 0) {
-    bi[count] = '0';
-  }else{
-    bi[count] = '1';
+
+int dfs_end(binary_t *t) {
+  if (t==NULL) {
+    return 0;
   }
+  bi[count] = '0';
   count++;
-  if (t == NULL) {
-    
-    return NULL;
+  dfs_end(t->left);
+  bi[count] = '\0';
+  count--;
+  bi[count] = '1';
+  count++;
+  dfs_end(t->right);
+  bi[count] = '\0';
+  count--;
+  if (t->word != "\0") {
+    printf("%s: ",t->word);
+      for (int i = 0;i<count;i++) {
+        printf("%c",bi[i]);
+      }
+      printf("\n");
   }
-  recur = t;
-  sy = 0;
-  recu(t->left);
-  sy = 1;
-  recu(t->right);
-}
-int dfs_end(binary_t *t,int n) {
-  
-  for (int i = 0;i<=n;i++) {
-    count = 0;
-    printf("%s: ",recu(t)->word);
-    int j = 0;
-    while (bi[j] != '\0') {
-      printf("%c",bi[j]);
-      j++;
-    }
-    printf("\n");
-    if (sy == 1) {
-      temp_recu->right == NULL;
-    } else {
-      temp_recu->left == NULL;
-    }
-  }
-  
 } 
 int main(void) {
   heap_t *max_heap = NULL;
@@ -177,21 +174,22 @@ int main(void) {
   for (i=0; i<n; i++) {
     scanf("%s %d", max_heap->tree[max_heap->last_index+1].word, &frequency);
     insert(max_heap,max_heap->tree[max_heap->last_index+1].word,frequency);
-    
   }
+  //printf("start");
+  //bfs(max_heap);  
   while (max_heap->tree[2].data != 0) {
     binary_t *right = (binary_t *)malloc(sizeof(binary_t));
     binary_t *left = (binary_t *)malloc(sizeof(binary_t));
     *left = delete_min1(max_heap);
-    printf("de1");
-    bfs(max_heap);
+    //printf("de1");
+    //bfs(max_heap);
     *right = delete_min1(max_heap);
-    printf("de2");
-    bfs(max_heap);
+    //printf("de2");
+    //bfs(max_heap);
     add_tree(max_heap, left, right);
-    printf("add");
-    bfs(max_heap);
+    //printf("add");
+    //bfs(max_heap);
   }
-  dfs_end(&max_heap->tree[1],n);
+  dfs_end(&max_heap->tree[1]);
   
 }
