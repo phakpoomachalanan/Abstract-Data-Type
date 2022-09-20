@@ -24,14 +24,9 @@ node_t* init_node(char word[], int frequency);
 node_t* init_tree(node_t* node1, node_t* node2);
 void insert(heap_t* h, node_t* data);
 node_t* delete(heap_t* h);
-void bfs(heap_t* h);
 void print(node_t* t, int now);
-
 void percolate_up(heap_t* h, node_t* data, int now);
 void percolate_down(heap_t* h, int now);
-
-void print_tree_2(node_t *t, int depth, char pre);
-void print_tree(node_t *t);
 void print_binary(node_t* t, char* path, char bit, int depth);
 
 int main(void)
@@ -53,32 +48,17 @@ int main(void)
         scanf("%s %d%c", word, &frequency, &c);
         insert(h, init_node(word, frequency));
     }
-    //printf("\n");
-    //bfs(h);
     for (i=1; i<n; i++)
     {
-        //bfs(h);
         if (h->last_index < 2)
         {
             break;
         }
-        /*for (int k=1; k<h->last_index; k++)
-        {
-            print_tree(h->data[k]);
-        }*/
         node1 = delete(h);
-        //printf("");
-        //printf("node1: %s %d\n",node1->word, node1->frequency);
         node2 = delete(h);
-        //printf("node2: %s %d\n",node2->word, node2->frequency);
         node = init_tree(node1, node2);
-        //printf("node : %s %d\n-------------\n",node->word, node->frequency);
         insert(h, node);
-        //bfs(h);
-        
     }
-    //print_tree(h->data[1]);
-    //printf("\n");
     path = (char*)malloc(sizeof(char) * n);
     print_binary(h->data[1], path, '0', 0);
 
@@ -115,7 +95,6 @@ node_t* init_tree(node_t* node1, node_t* node2)
     n->left = node1;
     n->right = node2;
     strcpy(n->word, " ");
-    //printf("%3d = %s%3d + %s%3d\n", n->frequency, node1->word, node1->frequency, node2->word, node2->frequency);
     
     return n;
 }
@@ -135,18 +114,6 @@ node_t* delete(heap_t* h)
     percolate_down(h, 1);
 
     return temp;
-}
-
-void bfs(heap_t* h)
-{
-    int now = 1;
-
-    while (now < h->last_index)
-    {
-        printf("%s %d\n", h->data[now]->word, h->data[now]->frequency);
-        now++;
-    }
-    printf("\n");
 }
 
 void percolate_up(heap_t* h, node_t* data, int now)
@@ -189,22 +156,6 @@ void percolate_down(heap_t* h, int now)
 
         now = index == now * 2 ? now*2 : now*2+1;
     }
-}
-
-void print_tree_2(node_t *t, int depth, char pre){
-  int i;
-
-  if (t == NULL)
-    return;
-  for (i=0; i<depth; i++)
-    printf("    ");
-  printf("%c %s %d\n", pre, t->word, t->frequency);
-  print_tree_2(t->left, depth+1, 'L');
-  print_tree_2(t->right, depth+1, 'R');
-}
-
-void print_tree(node_t *t){
-  print_tree_2(t, 0, 'r');
 }
 
 void print_binary(node_t* t, char* path, char bit, int depth)
