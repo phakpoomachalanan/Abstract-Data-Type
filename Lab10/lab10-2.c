@@ -32,7 +32,6 @@ void print_binary(node_t* t, char* path, char bit, int depth);
 int main(void)
 {
     heap_t* h = NULL;
-    node_t* node = NULL;
     node_t* node1 = NULL;
     node_t* node2 = NULL;
     int     data, n, i;
@@ -43,7 +42,7 @@ int main(void)
 
     scanf("%d%c", &n, &c);
     h = init_heap(n);
-    for (int i=0; i<n; i++)
+    for (i=0; i<n; i++)
     {
         scanf("%s %d%c", word, &frequency, &c);
         insert(h, init_node(word, frequency));
@@ -56,8 +55,7 @@ int main(void)
         }
         node1 = delete(h);
         node2 = delete(h);
-        node = init_tree(node1, node2);
-        insert(h, node);
+        insert(h, init_tree(node1, node2));
     }
     path = (char*)malloc(sizeof(char) * n);
     print_binary(h->data[1], path, '0', 0);
@@ -149,7 +147,6 @@ void percolate_down(heap_t* h, int now)
         {
             index = now*2;
         }
-
         temp = h->data[index];
         h->data[index] = h->data[now];
         h->data[now] = temp;
