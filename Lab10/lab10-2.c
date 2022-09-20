@@ -53,7 +53,7 @@ int main(void)
         scanf("%s %d%c", word, &frequency, &c);
         insert(h, init_node(word, frequency));
     }
-    printf("\n");
+    //printf("\n");
     //bfs(h);
     for (i=1; i<n; i++)
     {
@@ -67,6 +67,7 @@ int main(void)
             print_tree(h->data[k]);
         }*/
         node1 = delete(h);
+        //printf("");
         //printf("node1: %s %d\n",node1->word, node1->frequency);
         node2 = delete(h);
         //printf("node2: %s %d\n",node2->word, node2->frequency);
@@ -132,7 +133,6 @@ node_t* delete(heap_t* h)
     temp = h->data[1];
     h->data[1] = h->data[--h->last_index];
     percolate_down(h, 1);
-    //printf("index: %d\n", h->last_index);
 
     return temp;
 }
@@ -170,19 +170,9 @@ void percolate_down(heap_t* h, int now)
 
     while (now*2 < h->last_index)
     {
-        if (h->last_index < 4)
+        if (h->data[now]->frequency <= h->data[now*2]->frequency && h->data[now]->frequency <= h->data[now*2+1]->frequency)
         {
-            if (h->data[1] < h->data[2])
-            {
-                temp = h->data[1];
-                h->data[1] = h->data[2];
-                h->data[2] = temp;
-                return;
-            }
-        }
-        if ((h->data[now]->frequency <= h->data[now*2]->frequency) && (h->data[now]->frequency <= h->data[now*2+1]->frequency))
-        {
-            return;
+            break;
         }
         if (h->data[now*2+1]->frequency < h->data[now*2]->frequency)
         {
@@ -196,8 +186,8 @@ void percolate_down(heap_t* h, int now)
         temp = h->data[index];
         h->data[index] = h->data[now];
         h->data[now] = temp;
-        //bfs(h);
-        now = index == now*2 ? now*2 : now*2+1;
+
+        now = index == now * 2 ? now*2 : now*2+1;
     }
 }
 
