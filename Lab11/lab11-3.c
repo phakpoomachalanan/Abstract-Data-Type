@@ -24,8 +24,9 @@ memory_t *init_memory(int size) {
     return memory;
 }
 
-// Write your code here
-// ...
+cache_t* init_cache(int size);
+cell_t init_cell(int data, int addr);
+void get_data(int addr, memory_t* memory, cache_t* cache);
 
 int main(void) {
     memory_t *memory = NULL;
@@ -43,4 +44,48 @@ int main(void) {
         get_data(addr, memory, cache);
     }
     return 0;
+}
+
+cache_t* init_cache(int size)
+{
+    cache_t* cache = (cache_t*)malloc(sizeof(cache_t));
+
+    cache->cache_size = size;
+    cache->cell = (cell_t*)malloc(sizeof(cell_t) * size);
+
+    return cache;
+}
+
+cell_t init_cell(int data, int addr)
+{
+    cell_t cell;
+
+    cell.data = data;
+    cell.mem_addr = addr;
+
+    return cell;
+}
+
+void get_data(int addr, memory_t* memory, cache_t* cache)
+{
+    int cache_addr = addr % cache->cache_size;
+
+    if (cache->cell[cache_addr].data == 0)
+    {
+        printf("Load from memory\n");
+        cache->cell[cache_addr] = init_cell(memory[addr], addr);
+    }
+    else
+    {
+        if (cache->cell[cache_addr].data != memory[addr])
+        {
+            printf("Index: %d is used\n", cache_addr);
+            printf("Load from memory\n");
+        }
+        else
+        {
+            printf("Address %d is loaded\n", addr);
+        }
+    }
+    printf("Data: %d\n", memory[addr]);
 }
