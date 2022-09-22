@@ -70,22 +70,18 @@ void get_data(int addr, memory_t* memory, cache_t* cache)
 {
     int cache_addr = addr % cache->cache_size;
 
-    if (cache->cell[cache_addr].data == 0)
+    if (cache->cell[cache_addr].data != memory[addr])
     {
+        if (cache->cell[cache_addr].data != 0)
+        {
+            printf("Index: %d is used\n", cache_addr);
+        }
         printf("Load from memory\n");
         cache->cell[cache_addr] = init_cell(memory[addr], addr);
     }
     else
     {
-        if (cache->cell[cache_addr].data != memory[addr])
-        {
-            printf("Index: %d is used\n", cache_addr);
-            printf("Load from memory\n");
-        }
-        else
-        {
-            printf("Address %d is loaded\n", addr);
-        }
+        printf("Address %d is loaded\n", addr);
     }
     printf("Data: %d\n", memory[addr]);
 }
