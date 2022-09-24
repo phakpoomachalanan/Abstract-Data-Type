@@ -23,7 +23,7 @@ int main(void) {
     char   *text = NULL;
     int    m, n, i, hash_key;
     int    command;
-
+ 
     scanf("%d %d %d", &m, &n, &hash_key);
     hashtable = init_hashtable(m, hash_key);
     text = (char *)malloc(sizeof(char) * TEXTSIZE);
