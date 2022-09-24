@@ -59,8 +59,10 @@ hash_t* init_hashtable(int size, int hash_key)
 item_t* init_item(char* text)
 {
     item_t* item = (item_t*)malloc(sizeof(item_t));
+    char*   ptr = (char*)malloc(sizeof(char) * TEXTSIZE);
 
-    item->text = text;
+    strcpy(ptr, text);
+    item->text = ptr;
     item->next = NULL;
 
     return item;
