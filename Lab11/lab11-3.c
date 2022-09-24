@@ -27,7 +27,7 @@ memory_t *init_memory(int size) {
 cache_t* init_cache(int size);
 cell_t init_cell(int data, int addr);
 void get_data(int addr, memory_t* memory, cache_t* cache);
-
+ 
 int main(void) {
     memory_t *memory = NULL;
     cache_t  *cache = NULL;
