@@ -20,6 +20,10 @@ hash_t *init_hashtable(int m,int hash_key) {
     h->hash_key = hash_key;
     h->size = m;
     h->table = (item_t**)malloc(sizeof(item_t*)*m);
+    for (int i = 0; i < m; i++)
+    {
+        h->table[i] = NULL;
+    }
     
     return h;
 }
@@ -44,7 +48,11 @@ void insert(hash_t *hashtable , char *text) {
     i->next = NULL;
     unsigned int index = hash(hashtable,text); // hash
     item_t *curr_item = hashtable->table[index];
-    printf("%p",curr_item);
+    //printf("%p",curr_item);
+    if (curr_item == NULL)
+    {
+        hashtable->table[index] = i;
+    } 
     while (curr_item != NULL)
     {
         curr_item = curr_item->next;
@@ -54,6 +62,11 @@ void insert(hash_t *hashtable , char *text) {
 
 int search(hash_t *hashtable, char *text) {
     unsigned int index = hash(hashtable,text);
+    if (hashtable->table[index] == NULL)
+    {
+        return -1;
+    }
+    
     item_t *curr_item = hashtable->table[index];
     while (curr_item != NULL)
     {
