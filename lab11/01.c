@@ -19,19 +19,17 @@ hash_t *init_hashtable(int m, int hash_key) {
   hash->size = m;
   hash->hash_key = hash_key;
   hash->table = (item_t **)malloc(sizeof(item_t *)*m);
-  for(int i=0;i<m;i++) {
+  for (int i = 0;i<m;i++) {
     hash->table[i] = NULL;
   }
+  return hash;
 }
-void print() {
 
-}
 unsigned int find_hash_value(hash_t *hashtable, char *text) {
   unsigned int hash_value = (int)text[0];
   
   for (int i = 1; i < strlen(text); i++) {
     hash_value = (hashtable->hash_key * hash_value) + (int)text[i];
-    printf("%d",hash_value);
   }
   hash_value %= hashtable->size;
   
@@ -39,9 +37,14 @@ unsigned int find_hash_value(hash_t *hashtable, char *text) {
 }
 void insert(hash_t *hashtable, char *text) {
   unsigned int hash_value = find_hash_value(hashtable, text);
+  char *newtext;
+  newtext = (char *)malloc(sizeof(char)*TEXTSIZE);
+  printf("[%d]",hash_value);
   item_t *newitem = (item_t *)malloc(sizeof(item_t));
-  newitem->text = text;
+  strcpy(text,*newtext);
+  newitem->text = newtext;
   newitem->next = NULL;
+  printf("%p",hashtable->table[hash_value]);
   if (hashtable->table[hash_value] == NULL) {
     hashtable->table[hash_value] = newitem; 
   } else {
@@ -52,12 +55,12 @@ void insert(hash_t *hashtable, char *text) {
 
 int search(hash_t *hashtable, char *text) {
   unsigned int hash_value = find_hash_value(hashtable, text);
-
-  while(hashtable->table[hash_value]->text != text) {
-    if (hashtable->table[hash_value]->next == NULL) {
+  item_t *temp = hashtable->table[hash_value];
+  while(temp->text != text) {
+    if (temp->next == NULL) {
       return -1;
     }
-    hashtable->table[hash_value] = hashtable->table[hash_value]->next;
+    temp = temp->next;
   }
   return hash_value;
 }
@@ -78,9 +81,13 @@ int main(void) {
       case 1:
         insert(hashtable, text);
         for(int i=0;i<m;i++) {
-          if (hashtable->table[i] != NULL) {
-          printf("[%s]\n",hashtable->table[i]->text);
+          printf("%d",i);
+          item_t *temp = hashtable->table[i];
+          while (temp != NULL) {
+            printf("[%s]",temp->text);
+            temp = temp->next;
           }
+          printf("\n");
         }
         break;
       case 2:
