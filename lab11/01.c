@@ -28,19 +28,20 @@ void print() {
 }
 unsigned int find_hash_value(hash_t *hashtable, char *text) {
   unsigned int hash_value = (int)text[0];
-  int i;
-  for (i = 1; i < strlen(text); i++) {
+  
+  for (int i = 1; i < strlen(text); i++) {
     hash_value = (hashtable->hash_key * hash_value) + (int)text[i];
+    printf("%d",hash_value);
   }
   hash_value %= hashtable->size;
+  
   return hash_value;
 }
 void insert(hash_t *hashtable, char *text) {
   unsigned int hash_value = find_hash_value(hashtable, text);
   item_t *newitem = (item_t *)malloc(sizeof(item_t));
-  printf("yes");
   newitem->text = text;
-  printf("{%s}",newitem->text);
+  newitem->next = NULL;
   if (hashtable->table[hash_value] == NULL) {
     hashtable->table[hash_value] = newitem; 
   } else {
