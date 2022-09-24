@@ -18,7 +18,13 @@ hash_t *init_hashtable(int m, int hash_key) {
   hash_t *hash = (hash_t *)malloc(sizeof(hash_t));
   hash->size = m;
   hash->hash_key = hash_key;
-  hash->table = (char **)malloc(sizeof(char*)*m);
+  hash->table = (item_t **)malloc(sizeof(item_t *)*m);
+  for(int i=0;i<m;i++) {
+    hash->table[i] = NULL;
+  }
+}
+void print() {
+
 }
 unsigned int find_hash_value(hash_t *hashtable, char *text) {
   unsigned int hash_value = (int)text[0];
@@ -31,9 +37,10 @@ unsigned int find_hash_value(hash_t *hashtable, char *text) {
 }
 void insert(hash_t *hashtable, char *text) {
   unsigned int hash_value = find_hash_value(hashtable, text);
-  //printf("%d\n",hash_value);
   item_t *newitem = (item_t *)malloc(sizeof(item_t));
+  printf("yes");
   newitem->text = text;
+  printf("{%s}",newitem->text);
   if (hashtable->table[hash_value] == NULL) {
     hashtable->table[hash_value] = newitem; 
   } else {
@@ -69,6 +76,11 @@ int main(void) {
     switch (command) {
       case 1:
         insert(hashtable, text);
+        for(int i=0;i<m;i++) {
+          if (hashtable->table[i] != NULL) {
+          printf("[%s]\n",hashtable->table[i]->text);
+          }
+        }
         break;
       case 2:
         printf("%d\n", search(hashtable, text));
