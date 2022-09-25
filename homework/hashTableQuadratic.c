@@ -18,7 +18,10 @@ hash_t *init_hashtable(int m,int hash_key) {
     h->hash_key = hash_key;
     h->size = m;
     h->table = (item_t*)malloc(sizeof(item_t)*m);
-    
+    for (int i = 0; i < m; i++)
+    {
+        h->table[i] = NULL;
+    }
     return h;
 }
 
@@ -41,30 +44,31 @@ int F(int c) {
 }
 
 void insert(hash_t *hashtable , char *text) {
-    item_t *i = (item_t*)malloc(sizeof(char)*TEXTSIZE);
+    item_t i = (item_t)malloc(sizeof(char)*TEXTSIZE);
     strcpy(i,text);
     unsigned int index = hash(hashtable,text);
-    int c = 1;
-    while (hashtable->table[index] != NULL)
+    int probe = index;
+    int c = 0;
+    while (hashtable->table[probe] != NULL)
     {
-       index = F(c);
+       probe = (index + F(c)) % hashtable->size;
        c++;
     }
     
-    hashtable->table[index] = i;
+    hashtable->table[probe] = i;
 }
 
 int search(hash_t *hashtable, char *text) {
     unsigned int index = hash(hashtable,text);
-    int c = 1;
-    while (hashtable->table[index] != NULL)
+    int probe = index;
+    int c = 0;
+    while (hashtable->table[probe] != NULL)
     {
-       if (strcmp(hashtable->table[index],text) == 0)
+       if (strcmp(hashtable->table[probe],text) == 0)
        {
-            return index;
-       }
-       
-       index = F(c);
+            return probe;
+       }       
+       probe = (index + F(c)) % hashtable->size;
        c++;
     }
     return -1;
