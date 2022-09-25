@@ -51,32 +51,14 @@ void insert(hash_t *hashtable, char *text) {
   //printf("[%d]",hash_value);
   hashtable->table[hash_value] = newtext;
 }
-int count_text(item_t temp, char *text) {
-  if(temp == NULL) {
-    return -1;
-  }
-  int text_countC = 0;
-  int text_count = 0;
-  for(int i=0;i<strlen(text);i++) {
-    text_countC+=(int)text[i];
-  }
-  for(int i=0;i<strlen(temp);i++) {
-    text_count+=(int)temp[i];
-  }
-  //printf("[%d-%d]",text_countC,text_count);
-  if (text_count == text_countC) {
-    return 1;
-  } else {
-    return -1;
-  }
-}
+
 int search(hash_t *hashtable, char *text) {
   unsigned int hash_value = find_hash_value(hashtable, text);
   item_t temp = hashtable->table[hash_value];
   int start_value = hash_value;
   int i = 0;
   while (temp != NULL) {
-    if (count_text(temp, text) == 1) {
+    if (strcmp(temp, text) == 0) {
       return hash_value;
     }
     hash_value = start_value+(i+pow(i,2))/2;
