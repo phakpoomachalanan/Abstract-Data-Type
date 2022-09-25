@@ -55,7 +55,7 @@ hash_t* init_hashtable(int size, int hash_key)
 
 item_t init_item(char* text)
 {
-    item_t ptr = (item_t)malloc(sizeof(char) * TEXTSIZE);
+    item_t ptr = (item_t)malloc(sizeof(char));
 
     strcpy(ptr, text);
 
