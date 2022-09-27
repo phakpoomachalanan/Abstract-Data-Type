@@ -44,9 +44,15 @@ unsigned int hash(hash_t *hashtable , char *text) {
 
 void insert(hash_t *hashtable , char *text) {
     item_t *i = (item_t*)malloc(sizeof(item_t));
+<<<<<<< HEAD
     char *tmp = (char*)malloc(sizeof(char)*TEXTSIZE);
     strcpy(tmp, text);
     i->text = tmp;
+=======
+    char *temp = (char *)malloc(sizeof(char));
+    strcpy(temp, text);
+    i->text = temp;
+>>>>>>> cd044b926109f60a60a0c38e6e80fa3b615a8d64
     i->next = NULL;
     unsigned int index = hash(hashtable,text); // hash
     item_t *curr_item = hashtable->table[index];
@@ -57,7 +63,11 @@ void insert(hash_t *hashtable , char *text) {
         return;
     } 
     while (curr_item->next != NULL)
+<<<<<<< HEAD
     {       
+=======
+    {
+>>>>>>> cd044b926109f60a60a0c38e6e80fa3b615a8d64
         curr_item = curr_item->next;
     }
     curr_item->next = i;
