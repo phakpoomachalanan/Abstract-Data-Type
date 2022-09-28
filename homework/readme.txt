@@ -8,5 +8,4 @@ the data_structures folder contains all .c and .exe for all homeworks before Ass
 
 the more_c folder contains all .c and .exe for all homeworks before I was introduced to data structures. so basically they are all basic C intro stuff.
 
-`git status`
 yay I finally organised something lol
