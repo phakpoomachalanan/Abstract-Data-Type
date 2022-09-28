@@ -12,11 +12,11 @@ typedef struct hash {
     item_t **table;
     int size;
     int hash_key;
-} hash_t;
+} cache_t;
 
 
-hash_t *init_hashtable(int m,int hash_key) {
-    hash_t *h = (hash_t*)malloc(sizeof(hash_t));
+cache_t *init_hashtable(int m,int hash_key) {
+    cache_t *h = (cache_t*)malloc(sizeof(cache_t));
     h->hash_key = hash_key;
     h->size = m;
     h->table = (item_t**)malloc(sizeof(item_t*)*m);
@@ -36,23 +36,17 @@ unsigned int f(int key ,int n ,char *text) {
     return key*f(key,n-1,text)+text[n];
 }
 
-unsigned int hash(hash_t *hashtable , char *text) {
+unsigned int hash(cache_t *hashtable , char *text) {
     int key = hashtable->hash_key;
     int n = strlen(text)-1;
     return(f(key,n,text) % hashtable->size);
 }
 
-void insert(hash_t *hashtable , char *text) {
+void insert(cache_t *hashtable , char *text) {
     item_t *i = (item_t*)malloc(sizeof(item_t));
-<<<<<<< HEAD
     char *tmp = (char*)malloc(sizeof(char)*TEXTSIZE);
     strcpy(tmp, text);
     i->text = tmp;
-=======
-    char *temp = (char *)malloc(sizeof(char));
-    strcpy(temp, text);
-    i->text = temp;
->>>>>>> cd044b926109f60a60a0c38e6e80fa3b615a8d64
     i->next = NULL;
     unsigned int index = hash(hashtable,text); // hash
     item_t *curr_item = hashtable->table[index];
@@ -63,17 +57,13 @@ void insert(hash_t *hashtable , char *text) {
         return;
     } 
     while (curr_item->next != NULL)
-<<<<<<< HEAD
     {       
-=======
-    {
->>>>>>> cd044b926109f60a60a0c38e6e80fa3b615a8d64
         curr_item = curr_item->next;
     }
     curr_item->next = i;
 }
 
-int search(hash_t *hashtable, char *text) {
+int search(cache_t *hashtable, char *text) {
     unsigned int index = hash(hashtable,text);
     if (hashtable->table[index] == NULL)
     {
@@ -96,7 +86,7 @@ int search(hash_t *hashtable, char *text) {
 
 
 int main(void) {
-    hash_t *hashtable = NULL;
+    cache_t *hashtable = NULL;
     char *text = NULL;
     int m,n,i,hash_key;
     int command;

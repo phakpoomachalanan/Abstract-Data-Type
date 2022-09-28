@@ -9,12 +9,12 @@ typedef struct hash {
     item_t *table;
     int size;
     int hash_key;
-} hash_t;
+} cache_t;
 
 
-hash_t *init_hashtable(int m,int hash_key) {
+cache_t *init_hashtable(int m,int hash_key) {
     
-    hash_t *h = (hash_t*)malloc(sizeof(hash_t));
+    cache_t *h = (cache_t*)malloc(sizeof(cache_t));
     h->hash_key = hash_key;
     h->size = m;
     h->table = (item_t*)malloc(sizeof(item_t)*m);
@@ -33,7 +33,7 @@ unsigned int f(int key ,int n ,char *text) {
     return key*f(key,n-1,text)+text[n];
 }
 
-unsigned int hash(hash_t *hashtable , char *text) {
+unsigned int hash(cache_t *hashtable , char *text) {
     int key = hashtable->hash_key;
     int n = strlen(text)-1;
     return(f(key,n,text) % hashtable->size);
@@ -43,7 +43,7 @@ int F(int c) {
     return (c+c*c)/2;
 }
 
-void insert(hash_t *hashtable , char *text) {
+void insert(cache_t *hashtable , char *text) {
     item_t i = (item_t)malloc(sizeof(char)*TEXTSIZE);
     strcpy(i,text);
     unsigned int index = hash(hashtable,text);
@@ -58,7 +58,7 @@ void insert(hash_t *hashtable , char *text) {
     hashtable->table[probe] = i;
 }
 
-int search(hash_t *hashtable, char *text) {
+int search(cache_t *hashtable, char *text) {
     unsigned int index = hash(hashtable,text);
     int probe = index;
     int c = 0;
@@ -81,7 +81,7 @@ int search(hash_t *hashtable, char *text) {
 
 
 int main(void) {
-    hash_t *hashtable = NULL;
+    cache_t *hashtable = NULL;
     char *text = NULL;
     int m,n,i,hash_key;
     int command;
