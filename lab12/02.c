@@ -32,15 +32,16 @@ int main(void) {
     strcpy(str_sorted[i],bubble_sort(str_input));
 
   }
+  /*
   for (int i=0; i<m; i++) {
     printf("[%s | %s]\n",str[i],str_sorted[i]);
   }
+  */
   for (int i=0; i<n; i++) {
     scanf("%s",str_input);
-    char str_input_sorted[50];
-    strcpy(str_input_sorted,bubble_sort(str_input));
+    strcpy(str_input,bubble_sort(str_input));
     for (int j=0; j<m; j++) {
-      if (strcmp(str_sorted[j],str_input_sorted) == 1) {
+      if (strcmp(str_sorted[j],str_input) == 0) {
         printf("%s ",str[j]);
       }
     }
