@@ -11,10 +11,10 @@ int main(void) {
   int m,n;
   char str_input[50];
   scanf("%d %d",m,n);
-  char *str = (char*)malloc(sizeof(char)*m);
+  char *str = (char*)malloc(sizeof(char*)*m);
   for (int i=0; i<m; i++) {
     scanf("%s",&str_input);
-    str[i] = (char*)malloc(sizeof(char)*50)
+    str[i] = (char*)malloc(sizeof(char)*50);
     str[i] = str_input;
     printf("[%s]",str[i]);
   }
