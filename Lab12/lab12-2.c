@@ -12,6 +12,7 @@ node_t;
 typedef node_t list_t;
 
 list_t* init_list(int size);
+char* init_word();
 void insertion_sort(char* arr, int size);
 
 int main(void)
@@ -28,7 +29,7 @@ int main(void)
     for (i=0; i<size; i++)
     {
         scanf("%s%c", list[i].word, &c);
-        
+
         strcpy(list[i].sorted_word, list[i].word);
         insertion_sort(list[i].sorted_word, strlen(list[i].word));
     }
@@ -55,11 +56,18 @@ list_t* init_list(int size)
 
     for (i=0; i<size; i++)
     {
-        list[i].word = (char*)malloc(sizeof(char) * 50);
-        list[i].sorted_word = (char*)malloc(sizeof(char) * 50);
+        list[i].word = init_word();
+        list[i].sorted_word = init_word();
     }
 
     return list;
+}
+
+char* init_word()
+{
+    char* word = (char*)malloc(sizeof(char) * 50);
+
+    return word;
 }
 
 void insertion_sort(char* arr, int size)
