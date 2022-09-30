@@ -17,7 +17,7 @@ anagram_t *append(anagram_t *a,char *word) {
     newnode->word = (char*)malloc(sizeof(char)*99);
     newnode->sorted = (char*)malloc(sizeof(char)*99);
     strcpy(newnode->word,word);
-    strcpy(newnode->sorted,insertion_sort(word,strlen(word)-1));
+    strcpy(newnode->sorted,insertion_sort(word,strlen(word)));
     newnode->next = NULL;
     if (a == NULL)
     {
@@ -28,34 +28,6 @@ anagram_t *append(anagram_t *a,char *word) {
         tmp = tmp->next;
     }
     tmp->next = newnode;
-    return a;
-}
-
-anagram_t *delete(anagram_t *a,char *word) {
-    anagram_t *node = a;
-    anagram_t *nodebefore;
-    if (a->next == NULL)
-    {
-        return NULL;
-    }
-    while (strcmp(node->word,word) != 0 && node->next != NULL)
-    {
-        nodebefore = node;
-        node = node->next;
-    }
-    printf("%s ",nodebefore->word);
-    if (node == a)
-    {
-        free(node);
-        return a->next;
-    }
-    else if (node->next != NULL)
-    {
-        nodebefore->next = node->next;
-    } else {
-        nodebefore->next = NULL;
-    }
-    free(node);
     return a;
 }
 
@@ -81,11 +53,12 @@ char *insertion_sort(char *word,int size) {
         }
         word[index_sorted] = tmp;
         first_unsorted++;
-        /*for (int i = 0; i < size; i++)
+        printf("\n");
+        for (int i = 0; i < size; i++)
         {
             printf("%d ",word[i]);
         }
-        printf("\n");*/
+        printf("\n");
     }
     return word;
 }
@@ -109,21 +82,16 @@ void main() {
     {
         tmp = a;
         scanf("%s",findword);
-        strcpy(findsorted,insertion_sort(findword,strlen(word)-1));
-        while (tmp->next != NULL  && strcmp(findsorted,tmp->sorted)!=0)
+        strcpy(findsorted,insertion_sort(findword,strlen(word)));
+        while (tmp->next != NULL)
         {
-            tmp = tmp->next;
-        }
-        while (tmp != NULL && strcmp(findsorted,tmp->sorted)==0)
-        {
-            a = delete(a,findword);
-            if (tmp->next != NULL)    
-                tmp = tmp->next;
-            while (tmp->next != NULL && strcmp(findsorted,tmp->sorted)!=0)
+            if (strcmp(findsorted,tmp->sorted) == 0)
             {
-                tmp = tmp->next;
+                printf("%s ",tmp->word);
             }
+            tmp = tmp->next; 
         }
+        
         printf("\n");
     }
 }
