@@ -53,13 +53,14 @@ char *insertion_sort(char *word,int size) {
         }
         word[index_sorted] = tmp;
         first_unsorted++;
-        printf("\n");
+        /*
         for (int i = 0; i < size; i++)
         {
             printf("%d ",word[i]);
         }
-        printf("\n");
+        printf("\n");*/
     }
+    
     return word;
 }
 
@@ -73,6 +74,7 @@ void main() {
     {
         //linked list go brr
         scanf("%s",word);
+        //printf("%d\n",strlen(word));
         a = append(a,word);
     }
     char *findword = (char*)malloc(sizeof(char)*99);
@@ -82,8 +84,9 @@ void main() {
     {
         tmp = a;
         scanf("%s",findword);
-        strcpy(findsorted,insertion_sort(findword,strlen(word)));
-        while (tmp->next != NULL)
+        //printf("%d\n",strlen(findword));
+        strcpy(findsorted,insertion_sort(findword,strlen(findword)));
+        while (tmp != NULL)
         {
             if (strcmp(findsorted,tmp->sorted) == 0)
             {
