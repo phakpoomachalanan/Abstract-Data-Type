@@ -9,18 +9,16 @@ typedef struct data{
 int count;
 
 int find_shortest_path(int s,int t,int **m,data *d,int n) {
-  if (s<n && s>=0){
-    d[s].visit = 1;
-  }
+  d[s].visit = 1;
   //printf("{%d}",s);
   if (count >= 2*n && d[t].w!=0) {
     return d[t].w;
-  } else if (count >= n+n){
+  } else if (count >= 2*n){
     return -1;
   }
-
+  
   int min = 9999999;
-  int explor = 9999;
+  int explor;
   for (int j=0;j<n;j++) {
     if (m[s][j]<min && m[s][j]!=0 && d[j].visit == 0) {
       min = m[s][j];
@@ -37,6 +35,7 @@ int find_shortest_path(int s,int t,int **m,data *d,int n) {
   count++;
   for (int j=0;j<n;j++) {
     //printf("[%d]",d[j].w);
+    //Sleep(100);
   }
   //printf("\n");
   if (explor >=n) {
@@ -84,7 +83,7 @@ int main(void) {
     for (int k=0; k<n; k++) {
       Dijkstra[k].w = 0;
       Dijkstra[k].visit = 0;
-      Dijkstra[k].before = s;
+      Dijkstra[k].before = 0;
     }
     count = 0;
     printf("%d\n",find_shortest_path(s,t,matrix,Dijkstra,n));
