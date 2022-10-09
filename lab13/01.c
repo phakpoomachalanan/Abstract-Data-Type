@@ -11,17 +11,18 @@ int main(void) {
       matrix[i][j] = 0;
     }
   }
-  for (i=0; i<n; i++) {
-    for (j=0; j<n; j++) {
-      printf("%d ",matrix[i][j]);
-    }
-    printf("\n");
-  }
   int u,v,w;
   for (int i=0; i>m; i++) {
     scanf("%d %d %d",&u,&v,&w);
     matrix[u][v] = w;
     matrix[v][u] = w;
+  }
+  
+  for (i=0; i<n; i++) {
+    for (j=0; j<n; j++) {
+      printf("%d ",matrix[i][j]);
+    }
+    printf("\n");
   }
   int s,t;
   for (int i=0; i<p; i++) {
